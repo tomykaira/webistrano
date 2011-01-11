@@ -1,11 +1,11 @@
 Webistrano::Application.routes.draw do
   root :to => 'projects#dashboard'
-  
+
   # TODO: where is this used? -- fd
   match ':controller/service.wsdl' => '#wsdl'
-  
+
   resources :hosts
-  
+
   resources :recipes do
     collection do
       get :preview
@@ -15,6 +15,12 @@ Webistrano::Application.routes.draw do
   resources :projects do
     resources :project_configurations
     resources :stages do
+      member do
+        get  :tasks
+        get  :capfile
+        get  :recipes
+        put  :recipes
+      end
       resources :stage_configurations
       resources :roles
       resources :deployments do
@@ -45,6 +51,6 @@ Webistrano::Application.routes.draw do
   match '/login' => 'sessions#new', :as => :login
   match '/logout' => 'sessions#destroy', :as => :logout
   match '/stylesheets/application.css' => 'stylesheets#application', :as => :stylesheet
-  
+
   # match '/:controller(/:action(/:id))'
 end
