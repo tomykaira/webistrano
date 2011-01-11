@@ -1,7 +1,7 @@
 class StagesController < ApplicationController
 
   before_filter :load_project
-  
+
   # GET /projects/1/stages.xml
   def index
     @stages = current_project.stages
@@ -31,13 +31,13 @@ class StagesController < ApplicationController
   def edit
     @stage = current_project.stages.find(params[:id])
   end
-  
+
   # GET /projects/1/stages/1/tasks
   # GET /projects/1/stages/1/tasks.xml
   def tasks
     @stage = current_project.stages.find(params[:id])
     @tasks = @stage.list_tasks
-    
+
     respond_to do |format|
       format.html # tasks.rhtml
       format.xml  { render :xml => @tasks.to_xml }
@@ -65,7 +65,7 @@ class StagesController < ApplicationController
   # PUT /projects/1/stages/1.xml
   def update
     @stage = current_project.stages.find(params[:id])
-    
+
     respond_to do |format|
       if @stage.update_attributes(params[:stage])
         flash[:notice] = 'Stage was successfully updated.'
@@ -90,18 +90,18 @@ class StagesController < ApplicationController
       format.xml  { head :ok }
     end
   end
-  
+
   # GET /projects/1/stages/1/capfile
   # GET /projects/1/stages/1/capifile.xml
   def capfile
     @stage = current_project.stages.find(params[:id])
 
     respond_to do |format|
-      format.html { render :layout => false, :content_type => 'text/plain' }
+      format.text { render :layout => false, :content_type => 'text/plain' }
       format.xml  { render :xml => @stage.to_xml }
     end
   end
-  
+
   # GET | PUT /projects/1/stages/1/recipes
   # GET /projects/1/stages/1/recipes.xml
   def recipes
@@ -117,5 +117,5 @@ class StagesController < ApplicationController
       end
     end
   end
-  
+
 end
