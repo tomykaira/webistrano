@@ -8,7 +8,7 @@ class DeploymentTest < Test::Unit::TestCase
     Deployment.delete_all
   end
   
-  def test_locking_of_stage_through_lock_and_fire
+  test "locking_of_stage_through_lock_and_fire" do
     stage = create_stage_with_role
     assert !stage.locked?
     
@@ -23,7 +23,7 @@ class DeploymentTest < Test::Unit::TestCase
     assert res
   end
   
-  def test_lock_and_fire_handles_transaction_abort
+  test "lock_and_fire_handles_transaction_abort" do
     stage = create_stage_with_role
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
@@ -38,7 +38,7 @@ class DeploymentTest < Test::Unit::TestCase
     assert !res
   end
   
-  def test_lock_and_fire_sets_locking_deployment
+  test "lock_and_fire_sets_locking_deployment" do
     stage = create_stage_with_role
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
@@ -54,7 +54,7 @@ class DeploymentTest < Test::Unit::TestCase
     assert_equal 'MasterBlaster', stage.locking_deployment.user.login
   end
   
-  def test_lock_and_fire_handles_transaction_abort_if_stage_breaks
+  test "lock_and_fire_handles_transaction_abort_if_stage_breaks" do
     stage = create_stage_with_role
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|

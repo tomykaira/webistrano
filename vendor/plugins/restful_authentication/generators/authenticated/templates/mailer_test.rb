@@ -16,7 +16,7 @@ class <%= class_name %>MailerTest < Test::Unit::TestCase
     @expected.set_content_type "text", "plain", { "charset" => CHARSET }
   end
 
-  def test_dummy_test
+  test "dummy_test" do
     #do nothing
   end
 

@@ -8,12 +8,12 @@ class ProjectConfigurationsControllerTest < ActionController::TestCase
     @user = login
   end
 
-  def test_should_get_new
+  test "should_get_new" do
     get :new, :project_id => @project.id
     assert_response :success
   end
   
-  def test_should_create_project_configuration
+  test "should_create_project_configuration" do
     old_count = ProjectConfiguration.count
     post :create, :project_id => @project.id, :configuration => { :name => 'a', :value => 'b' }
     assert_equal old_count+1, ProjectConfiguration.count
@@ -21,17 +21,17 @@ class ProjectConfigurationsControllerTest < ActionController::TestCase
     assert_redirected_to project_path(@project)
   end
 
-  def test_should_get_edit
+  test "should_get_edit" do
     get :edit, :project_id => @project.id, :id => @config.id
     assert_response :success
   end
   
-  def test_should_update_project_configuration
+  test "should_update_project_configuration" do
     put :update, :project_id => @project.id, :id => @config.id, :configuration => { :name => 'a', :value => 'b'}
     assert_redirected_to project_path(@project)
   end
   
-  def test_should_destroy_project_configuration
+  test "should_destroy_project_configuration" do
     old_count = ProjectConfiguration.count
     delete :destroy, :project_id => @project.id, :id => @config.id
     assert_equal old_count-1, ProjectConfiguration.count

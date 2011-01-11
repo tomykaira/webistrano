@@ -198,7 +198,7 @@ module Factories
     r.name = options[:name]
     r.description = options[:description]
     r.body = options[:body]
-
+    
     r.save!
   
     return r

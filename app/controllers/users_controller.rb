@@ -121,7 +121,7 @@ class UsersController < ApplicationController
     if current_user.admin? || current_user.id == User.find(params[:id]).id
       return true
     else
-      redirect_to home_url
+      redirect_to root_url
       return false
     end
   end

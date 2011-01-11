@@ -56,7 +56,7 @@
 </fieldset>
 
 <% content_for(:breadcrumb) do %>
-  <% breadcrumb_box do %>
+  <%= breadcrumb_box do %>
     <%= link_to "Manage recipes", recipes_path, :style => "float:right", :class => "arrow_link" %>
     <%= link_to "Recipes", recipes_path %> &gt; 
     Recipe <%= link_to @recipe.name, recipe_path(@recipe) %> 

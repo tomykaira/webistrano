@@ -14,7 +14,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     @deployment = create_new_deployment(:stage => @stage, :task => 'master:do')
   end
   
-  def test_initialization    
+  test "initialization    " do
     # no deployment
     assert_raise(ArgumentError){
       deployer = Webistrano::Deployer.new  
@@ -33,7 +33,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     }
   end
   
-  def test_setting_of_configuration_parameters_on_capistrano_configuration
+  test "setting_of_configuration_parameters_on_capistrano_configuration" do
     # create some configuration entries for the stage
     config = @stage.configuration_parameters.build(:name => 'stage_specific', :value => 'xxxxx'); config.save!
     config = @stage.configuration_parameters.build(:name => 'stage_specific2', :value => 'testapp'); config.save!
@@ -104,7 +104,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_role_attributes
+  test "role_attributes" do
     # prepare stage + roles
     @stage = create_new_stage
     
@@ -158,7 +158,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_excluded_hosts
+  test "excluded_hosts" do
     # prepare stage + roles
     @stage = create_new_stage
     dead_host = create_new_host
@@ -213,7 +213,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_invoke_task
+  test "invoke_task" do
     assert_correct_task_called('deploy:setup')
     assert_correct_task_called('deploy:update')
     assert_correct_task_called('deploy:restart')
@@ -221,7 +221,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_correct_task_called('deploy:start')
   end
   
-  def test_type_cast
+  test "type_cast" do
     
     assert_equal '', Webistrano::Deployer.type_cast('')
     assert_equal nil, Webistrano::Deployer.type_cast('nil')
@@ -235,40 +235,40 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal 'la le lu 123', Webistrano::Deployer.type_cast('la le lu 123')
   end
   
-  def test_type_cast_cvs_root
+  test "type_cast_cvs_root" do
     assert_equal ":ext:msaba@xxxxx.xxxx.com:/project/cvsroot", Webistrano::Deployer.type_cast(":ext:msaba@xxxxx.xxxx.com:/project/cvsroot")
   end
   
-  def test_type_cast_arrays
+  test "type_cast_arrays" do
     assert_equal ['foo', :bar, 'bam'], Webistrano::Deployer.type_cast("[foo, :bar, 'bam']")
     assert_equal ['1', '2', '3', '4'], Webistrano::Deployer.type_cast('[1, 2, 3, 4]')
   end
   
-  def test_type_cast_arrays_with_embedded_content
+  test "type_cast_arrays_with_embedded_content" do
     assert_equal ['1', '2', :a, true], Webistrano::Deployer.type_cast('[1, 2, :a, true]')
     # TODO the parser is very simple for now :-(
     assert_not_equal ['1', ['3', 'foo'], :a, true], Webistrano::Deployer.type_cast('[1, [3, "foo"], :a, true]')
   end
   
-  def test_type_cast_hashes
+  test "type_cast_hashes" do
     assert_equal({:a => :b}, Webistrano::Deployer.type_cast("{:a => :b}"))
     assert_equal({:a => '1'}, Webistrano::Deployer.type_cast("{:a => 1}"))
     assert_equal({'1' => '1', '2' => '2'}, Webistrano::Deployer.type_cast("{1 => 1, 2 => 2}"))
   end
   
-  def test_type_cast_hashes_with_embedded_content
+  test "type_cast_hashes_with_embedded_content" do
     # TODO the parser is very simple for now :-(
     assert_not_equal({'1' => '1', '2' => [:a, :b, '1']}, Webistrano::Deployer.type_cast("{1 => 1, 2 => [:a, :b, 1]}"))
   end
   
-  def test_type_cast_hashes_does_not_cast_evaluations
+  test "type_cast_hashes_does_not_cast_evaluations" do
     assert_equal '#{foo}', Webistrano::Deployer.type_cast('#{foo}')
     assert_equal 'a#{foo}', Webistrano::Deployer.type_cast('a#{foo}')
     assert_equal 'be #{foo}', Webistrano::Deployer.type_cast('be #{foo}')
     assert_equal '#{foo} 123', Webistrano::Deployer.type_cast(' #{foo} 123')
   end
   
-  def test_task_invokation_successful
+  test "task_invokation_successful" do
     prepare_config_mocks
     
     @deployment = create_new_deployment(:stage => @stage, :task => 'deploy:update')
@@ -283,33 +283,36 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert @deployment.success?
   end
   
-  def test_task_invokation_not_successful
+  test "task_invokation_not_successful" do
     # prepare mocks
     #
     
     # Logger stubing
-    mock_cap_logger = mock
-    mock_cap_logger.expects(:level=).with(3)
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
 
-    # config stubbing
-    mock_cap_config = mock
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:load)
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # vars
-    mock_cap_config.stubs(:set)
-
-    # roles
-    mock_cap_config.stubs(:role)
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:load)
+      stubs(:trigger)
+      stubs(:[])
+      stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision)
+      
+      # vars
+      stubs(:set)
+      
+      # roles
+      stubs(:role)
+      
+      # the fun part
+      # task execution throws an exception
+      expects(:find_and_execute_task).raises(Capistrano::Error, 'sorry - no capistrano today')
+    end
     
-    # the fun part
-    # task execution throws an exception
-    mock_cap_config.expects(:find_and_execute_task).raises(Capistrano::Error, 'sorry - no capistrano today')
-
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
     
@@ -326,7 +329,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_match(/sorry - no capistrano today/, @deployment.log)
   end
   
-  def test_db_logging
+  test "db_logging" do
     @deployment = create_new_deployment(:stage => @stage, :task => 'deploy:update')
     
     # mocks
@@ -357,7 +360,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal "  * executing `deploy:update'\n", @deployment.log
   end
   
-  def test_db_logging_if_task_vars_incomplete
+  test "db_logging_if_task_vars_incomplete" do
     # create a deployment
     @deployment = create_new_deployment(:stage => @stage, :task => 'deploy:default')
  
@@ -374,7 +377,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_match(/Please specify the repository that houses your application's code, set :repository, 'foo'/, @deployment.log) # ' fix highlighting
   end
   
-  def test_config_logger_and_real_revision_are_set
+  test "config_logger_and_real_revision_are_set" do
     # prepare the stage by creating a nearly blank config
     @project.configuration_parameters.delete_all
     @stage.configuration_parameters.delete_all
@@ -389,34 +392,36 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     #
 
     # Logger stubing
-    mock_cap_logger = mock()
-    mock_cap_logger.expects(:level=).with(3)
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
 
-    # config stubbing
-    mock_cap_config = mock()
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:load)
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:find_and_execute_task)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # roles
-    mock_cap_config.stubs(:role)
-
-    #
-    # now the interesting part
-    # check that the logger and real_revision were set
-    # 
-    # vars
-    mock_cap_config.expects(:set).with{|x,y|
-      if x == :logger
-        (y.is_a? Webistrano::Logger)
-      else
-        [:password, :application, :repository, :real_revision, :webistrano_stage, :webistrano_project].include?(x)
-      end
-    }.times(7)
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:load)
+      stubs(:trigger)
+      stubs(:find_and_execute_task)
+      stubs(:[])
+      stubs(:fetch).with(:scm)
+      
+      # roles
+      stubs(:role)
+      
+      #
+      # now the interesting part
+      # check that the logger and real_revision were set
+      # 
+      # vars
+      expects(:set).with do |x,y|
+        if x == :logger
+          (y.is_a? Webistrano::Logger)
+        else
+          [:password, :application, :repository, :real_revision, :webistrano_stage, :webistrano_project].include?(x)
+        end
+      end.times(7)
+    end
 
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
@@ -426,7 +431,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
     
-  def test_handling_of_scm_error
+  test "handling_of_scm_error" do
     # prepare
     project = create_new_project(:template => 'rails')
     stage = create_new_stage(:project => @project)
@@ -448,7 +453,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_match(/Local scm command failed/, deployment.log)
   end
   
-  def test_handling_of_open_scm_command_error
+  test "handling_of_open_scm_command_error" do
     # prepare
     project = create_new_project(:template => 'rails')
     stage = create_new_stage(:project => @project)
@@ -468,7 +473,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_match(/Local scm command not found/, deployment.log)
   end
     
-  def test_handling_of_prompt_configuration
+  test "handling_of_prompt_configuration" do
     stage_with_prompt = create_new_stage(:name => 'prod', :project => @project)
     role = create_new_role(:stage => stage_with_prompt)
     assert stage_with_prompt.deployment_possible?, stage_with_prompt.deployment_problems.inspect
@@ -484,7 +489,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_loading_of_template_tasks
+  test "loading_of_template_tasks" do
     @project.template = 'mongrel_rails'
     @project.save!
     
@@ -525,7 +530,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_custom_recipes
+  test "custom_recipes" do
     recipe_1 = create_new_recipe(:name => 'Copy config files', :body => 'foobar here')
     @stage.recipes << recipe_1
     
@@ -573,7 +578,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_load_order_of_recipes
+  test "load_order_of_recipes" do
     recipe_1 = create_new_recipe(:name => 'B', :body => 'foobar here')
     @stage.recipes << recipe_1
     
@@ -581,33 +586,36 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     @stage.recipes << recipe_2
     
     # Logger stubing
-    mock_cap_logger = mock
-    mock_cap_logger.expects(:level=).with(3)
-
-    # config stubbing
-    mock_cap_config = mock
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:find_and_execute_task)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # vars
-    mock_cap_config.stubs(:set)
-
-    # roles
-    mock_cap_config.stubs(:role)
-    
-    #
-    # now the interesting part, load
-    #
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
     
     seq = sequence('recipe_loading')
-    mock_cap_config.stubs(:load)
-    mock_cap_config.expects(:load).with(:string => recipe_2.body ).in_sequence(seq)
-    mock_cap_config.expects(:load).with(:string => recipe_1.body ).in_sequence(seq)
 
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:trigger)
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:find_and_execute_task)
+      stubs(:[])
+      stubs(:fetch).with(:scm)
+      
+      # vars
+      stubs(:set)
+      
+      # roles
+      stubs(:role)
+      
+      #
+      # now the interesting part, load
+      #
+      
+      stubs(:load)
+      expects(:load).with(:string => recipe_2.body ).in_sequence(seq)
+      expects(:load).with(:string => recipe_1.body ).in_sequence(seq)
+    end
+  
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
     
@@ -618,28 +626,31 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_handling_of_exceptions_during_command_execution
+  test "handling_of_exceptions_during_command_execution" do
     # Logger stubing
-    mock_cap_logger = mock
-    mock_cap_logger.expects(:level=).with(3)
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
 
-    # config stubbing
-    mock_cap_config = mock
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:load)
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # vars
-    mock_cap_config.stubs(:set)
-
-    # roles
-    mock_cap_config.stubs(:role)
-    
-    # interesting part, unexpected exception (e.g. non-SSH, non-Capistrano)
-    mock_cap_config.expects(:find_and_execute_task).raises(RuntimeError)
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:trigger)
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:[])
+      stubs(:load)
+      stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision)
+      
+      # vars
+      stubs(:set)
+      
+      # roles
+      stubs(:role)
+      
+      # interesting part, unexpected exception (e.g. non-SSH, non-Capistrano)
+      expects(:find_and_execute_task).raises(RuntimeError)
+    end
     
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
@@ -654,7 +665,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_match(/RuntimeError/, @deployment.log)
   end
   
-  def test_setting_of_project_and_stage_name
+  test "setting_of_project_and_stage_name" do
     # set project/stage names
     @project.name = "MySampleProject"
     @project.save!
@@ -667,23 +678,24 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     @stage.configuration_parameters.delete_all
     
     # Logger stubing
-    mock_cap_logger = mock
-    mock_cap_logger.expects(:level=).with(3)
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
 
-    # config stubbing
-    mock_cap_config = mock
-    
-    mock_cap_config.stubs(:load)
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:find_and_execute_task)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # roles
-    mock_cap_config.stubs(:role)
-    
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:load)
+      stubs(:trigger)
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:find_and_execute_task)
+      stubs(:[])
+      stubs(:fetch).with(:scm)
+      
+      # roles
+      stubs(:role)
+    end
+  
     install_fake_set(mock_cap_config)
     
     # main mock install
@@ -698,7 +710,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal "my_sample_stage_12", $vars_set[:webistrano_stage]
   end
   
-  def test_reference_of_configuration_parameters
+  test "reference_of_configuration_parameters" do
     @project.configuration_parameters.create!(:name => 'foo', :value => 'a nice value here, please!')
     @stage.configuration_parameters.create!(:name => 'using_foo', :value => 'Sir: #{foo}')
     @stage.configuration_parameters.create!(:name => 'bar', :value => '12')
@@ -715,7 +727,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal "12 a nice value here, please!", $vars_set[:using_foo_and_bar]
   end
   
-  def test_reference_of_capistrano_build_ins
+  test "reference_of_capistrano_build_ins" do
     @project.configuration_parameters.create!(:name => 'foo', :value => 'where is #{release_path} ?')
 
     deployer = Webistrano::Deployer.new(@deployment)
@@ -726,7 +738,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_reference_of_random_methods
+  test "reference_of_random_methods" do
     Kernel.expects(:exit).never
     @project.configuration_parameters.create!(:name => 'foo', :value => '#{Kernel.exit}')
 
@@ -740,7 +752,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal '#{Kernel.exit}', $vars_set[:foo]
   end
 
-  def test_reference_of_configuration_parameters_in_prompt_config
+  test "reference_of_configuration_parameters_in_prompt_config" do
     @project.configuration_parameters.create!(:name => 'foo', :value => 'a nice value here, please!')
     @stage.configuration_parameters.create!(:name => 'using_foo', :prompt_on_deploy => 1)
     
@@ -765,7 +777,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
   
   # test that we do not throw an exception if sudo is used
-  def test_sudo_callback_behaviour
+  test "sudo_callback_behaviour" do
     # original Capistrano Config
     assert_not_nil Capistrano::Configuration.default_io_proc
     assert Capistrano::Configuration.default_io_proc.is_a?(Proc)
@@ -775,7 +787,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert Webistrano::Configuration.default_io_proc.is_a?(Proc)
   end
   
-  def test_ssh_options
+  test "ssh_options" do
     c = @project.configuration_parameters.build(
       :name => 'ssh_port', 
       :value => '44'
@@ -790,7 +802,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_exchange_revision_with_git
+  test "exchange_revision_with_git" do
     config = @stage.configuration_parameters.build(:name => 'scm', :value => 'git')
     config.save!
     
@@ -807,7 +819,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_exchange_revision_without_git
+  test "exchange_revision_without_git" do
     config = @stage.configuration_parameters.build(:name => 'scm', :value => 'svn')
     config.save!
     
@@ -823,7 +835,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer.invoke_task!
   end
   
-  def test_list_tasks
+  test "list_tasks" do
     d = Deployment.new
     d.stage = @stage
     deployer = Webistrano::Deployer.new(d)
@@ -836,6 +848,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     # add a stage recipe
     recipe_body = <<-EOS
       namespace :foo do
+        desc "bar"
         task :bar do
           run 'foobar'
         end
@@ -850,7 +863,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal 1, @stage.list_tasks.delete_if{|t| t[:name] != 'foo:bar'}.size
   end
   
-  def test_deployer_sets_revision   
+  test "deployer_sets_revision   " do
     config = prepare_config_mocks   
     
     deployer = Webistrano::Deployer.new(@deployment)
@@ -866,7 +879,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert_equal "4943", deployer.deployment.reload.revision
   end
   
-  def test_deployer_sets_pid
+  test "deployer_sets_pid" do
     config = prepare_config_mocks   
     
     deployer = Webistrano::Deployer.new(@deployment)
@@ -889,25 +902,26 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   def prepare_config_mocks
 
     # Logger stubing
-    mock_cap_logger = mock
-    mock_cap_logger.expects(:level=).with(3)
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
 
-    # config stubbing
-    mock_cap_config = mock
-    
-    mock_cap_config.stubs(:load)
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:find_and_execute_task)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # vars
-    mock_cap_config.stubs(:set)
-
-    # roles
-    mock_cap_config.stubs(:role)
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:load)
+      stubs(:trigger)
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:find_and_execute_task)
+      stubs(:[])
+      stubs(:fetch).with(:scm)
+      
+      # vars
+      stubs(:set)
+      
+      # roles
+      stubs(:role)
+    end
 
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
@@ -929,26 +943,28 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     #
 
     # Logger stubing
-    mock_cap_logger = mock
-    mock_cap_logger.expects(:level=).with(3)
+    mock_cap_logger = mock 'mock_cap_logger' do
+      expects(:level=).with(3)
+    end
 
-    # config stubbing
-    mock_cap_config = mock
-    mock_cap_config.stubs(:logger).returns(mock_cap_logger)
-    mock_cap_config.stubs(:logger=)
-    mock_cap_config.stubs(:load)
-    mock_cap_config.stubs(:trigger)
-    mock_cap_config.stubs(:[])
-    mock_cap_config.stubs(:fetch).with(:scm)
-
-    # vars
-    mock_cap_config.stubs(:set)
-
-    # roles
-    mock_cap_config.stubs(:role)
-
-    # now the interesting part, the task
-    mock_cap_config.expects(:find_and_execute_task).with(task_name, {:after => :finish, :before => :start})
+    mock_cap_config = mock 'mock_cap_config' do
+      # config stubbing
+      stubs(:logger).returns(mock_cap_logger)
+      stubs(:logger=)
+      stubs(:load)
+      stubs(:trigger)
+      stubs(:[])
+      stubs(:fetch).with(:scm)
+      
+      # vars
+      stubs(:set)
+      
+      # roles
+      stubs(:role)
+      
+      # now the interesting part, the task
+      expects(:find_and_execute_task).with(task_name, {:after => :finish, :before => :start})
+    end
 
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)

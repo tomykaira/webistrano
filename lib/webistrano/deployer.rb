@@ -33,8 +33,6 @@ module Webistrano
       end
     end
   
-    # validates this instance
-    # raises on ArgumentError if not valid
     def validate
       raise ArgumentError, 'The given deployment has no roles and thus can not be deployed!' if deployment.roles.empty?
     end

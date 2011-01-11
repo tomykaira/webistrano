@@ -18,19 +18,7 @@ class Stage < ActiveRecord::Base
   # (think model.errors lite)
   attr_accessor :deployment_problems
   
-  EMAIL_BASE_REGEX = '([^@\s\,\<\>\?\&\;\:]+)@((?:[\-a-z0-9]+\.)+[a-z]{2,})'
-  EMAIL_REGEX = /^#{EMAIL_BASE_REGEX}$/i
-    
-  def validate
-    unless self.alert_emails.blank?
-      self.alert_emails.split(" ").each do |email|
-        unless email.match(EMAIL_REGEX)
-          self.errors.add('alert_emails', 'format is not valid, please seperate email addresses by space') 
-          break
-        end
-      end
-    end
-  end
+  validate :guard_valid_email_addresses
   
   # wrapper around alert_emails, returns an array of email addresses
   def emails
@@ -126,7 +114,7 @@ class Stage < ActiveRecord::Base
     begin
       deployer.list_tasks.collect { |t| {:name => t.fully_qualified_name, :description => t.description} }.delete_if{|t| t[:name] == 'shell' || t[:name] == 'invoke'}
     rescue Exception => e
-      RAILS_DEFAULT_LOGGER.error("Problem listing tasks of stage #{id}: #{e} - #{e.backtrace.join("\n")} ")
+      Rails.logger.error("Problem listing tasks of stage #{id}: #{e} - #{e.backtrace.join("\n")} ")
       [{:name => "Error", :description => "Could not load tasks - syntax error in recipe definition?"}]
     end
   end
@@ -152,9 +140,27 @@ class Stage < ActiveRecord::Base
     self.reload
   end
   
-  protected
+protected
+
   def add_deployment_problem(key, desc)
     @deployment_problems = @deployment_problems || {}
     @deployment_problems[key] = desc
   end
+  
+private
+  
+  EMAIL_BASE_REGEX = '([^@\s\,\<\>\?\&\;\:]+)@((?:[\-a-z0-9]+\.)+[a-z]{2,})'
+  EMAIL_REGEX = /^#{EMAIL_BASE_REGEX}$/i
+  
+  def guard_valid_email_addresses
+    unless self.alert_emails.blank?
+      self.alert_emails.split(" ").each do |email|
+        unless email.match(EMAIL_REGEX)
+          self.errors.add('alert_emails', 'format is not valid, please seperate email addresses by space') 
+          break
+        end
+      end
+    end
+  end
+
 end

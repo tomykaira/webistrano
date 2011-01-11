@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class UsersControllerTest < ActionController::TestCase
 
-  def test_should_not_allow_for_non_admins_to_create_users
+  test "should_not_allow_for_non_admins_to_create_users" do
     login
     
     assert_no_difference 'User.count' do
@@ -11,7 +11,7 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  def test_should_allow_for_admins_to_create_users
+  test "should_allow_for_admins_to_create_users" do
     admin_login
     
     assert_difference 'User.count' do
@@ -20,47 +20,47 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  def test_should_require_login_on_signup
+  test "should_require_login_on_signup" do
     admin_login
     
     assert_no_difference 'User.count' do
       create_user(:login => nil)
-      assert assigns(:user).errors.on(:login)
+      assert_not_empty assigns(:user).errors[:login]
       assert_response :success
     end
   end
 
-  def test_should_require_password_on_signup
+  test "should_require_password_on_signup" do
     admin_login
     
     assert_no_difference 'User.count' do
       create_user(:password => nil)
-      assert assigns(:user).errors.on(:password)
+      assert_not_empty assigns(:user).errors[:password]
       assert_response :success
     end
   end
 
-  def test_should_require_password_confirmation_on_signup
+  test "should_require_password_confirmation_on_signup" do
     admin_login
     
     assert_no_difference 'User.count' do
       create_user(:password_confirmation => nil)
-      assert assigns(:user).errors.on(:password_confirmation)
+      assert_not_empty assigns(:user).errors[:password_confirmation]
       assert_response :success
     end
   end
 
-  def test_should_require_email_on_signup
+  test "should_require_email_on_signup" do
     admin_login
     
     assert_no_difference 'User.count' do
       create_user(:email => nil)
-      assert assigns(:user).errors.on(:email)
+      assert_not_empty assigns(:user).errors[:email]
       assert_response :success
     end
   end
   
-  def test_non_admins_can_not_delete_users
+  test "non_admins_can_not_delete_users" do
     User.delete_all
     user_1 = create_new_user(:login => 'user_1')
     user_2 = create_new_user(:login => 'user_2')
@@ -77,7 +77,7 @@ class UsersControllerTest < ActionController::TestCase
     
   end
   
-  def test_admins_can_delete_users
+  test "admins_can_delete_users" do
     User.delete_all
     user_1 = create_new_user
     user_2 = create_new_user
@@ -91,7 +91,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal 3, User.enabled.count
   end
   
-  def test_admin_status_can_not_be_set_by_non_admins
+  test "admin_status_can_not_be_set_by_non_admins" do
     user_1 = create_new_user
     user_2 = create_new_user
     
@@ -106,7 +106,7 @@ class UsersControllerTest < ActionController::TestCase
     assert !user_2.admin?
   end
   
-  def test_admin_status_can_be_set_by_non_admins
+  test "admin_status_can_be_set_by_non_admins" do
     admin = create_new_user
     admin.make_admin!
     user_2 = create_new_user
@@ -122,7 +122,7 @@ class UsersControllerTest < ActionController::TestCase
     assert user_2.admin?
   end
   
-  def test_always_one_admin_left
+  test "always_one_admin_left" do
     User.delete_all
     admin = create_new_user
     admin.make_admin!
@@ -148,7 +148,7 @@ class UsersControllerTest < ActionController::TestCase
   end
   
   # basic non-exception test
-  def test_deployments    
+  test "deployments    " do
     user = login
     
     assert_nothing_raised{
@@ -157,7 +157,7 @@ class UsersControllerTest < ActionController::TestCase
     
   end
   
-  def test_user_can_edit_themselfs
+  test "user_can_edit_themselfs" do
     user = login
     
     get :edit, :id => user.id
@@ -168,7 +168,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal 'foobarrr', user.login
   end
   
-  def test_user_not_can_edit_other
+  test "user_not_can_edit_other" do
     user = login
     other = create_new_user
     
@@ -180,7 +180,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_equal 'foobarrr', other.login
   end
   
-  def test_destroy_should_only_mark_as_disabled
+  test "destroy_should_only_mark_as_disabled" do
     user = admin_login
     other = create_new_user
     assert !other.disabled?
@@ -194,7 +194,7 @@ class UsersControllerTest < ActionController::TestCase
     
   end
   
-  def test_enable
+  test "enable" do
     user = admin_login
     other = create_new_user
     other.disable
@@ -206,7 +206,7 @@ class UsersControllerTest < ActionController::TestCase
     assert !other.disabled?
   end
   
-  def test_enable_only_admin
+  test "enable_only_admin" do
     user = login
     other = create_new_user
     other.disable
@@ -218,14 +218,14 @@ class UsersControllerTest < ActionController::TestCase
     assert other.disabled?
   end
   
-  def test_should_logout_if_disabled_after_login
+  test "should_logout_if_disabled_after_login" do
     user = login
     
     user.disable
     
     get :index
     assert_response :redirect
-    assert_redirected_to home_path
+    assert_redirected_to root_path
   end
   
 

@@ -89,7 +89,7 @@ Here is a more complicated configuration showing most of the configuration optio
 (this does not show proxy options, which are covered in the next section):
 
   # enable detailed CAS logging
-  cas_logger = CASClient::Logger.new(RAILS_ROOT+'/log/cas.log')
+  cas_logger = CASClient::Logger.new(Rails.root+'/log/cas.log')
   cas_logger.level = Logger::DEBUG
 
   CASClient::Frameworks::Rails::Filter.configure(
@@ -195,7 +195,7 @@ all you need to do is this:
 In your <tt>config/environment.rb</tt>:
 
   # enable detailed CAS logging for easier troubleshooting
-  cas_logger = CASClient::Logger.new(RAILS_ROOT+'/log/cas.log')
+  cas_logger = CASClient::Logger.new(Rails.root+'/log/cas.log')
   cas_logger.level = Logger::DEBUG
 
   CASClient::Frameworks::Rails::Filter.configure(

@@ -12,7 +12,7 @@ class Webistrano::LoggerTest < ActiveSupport::TestCase
 
   end
   
-  def test_initialization
+  test "initialization" do
     
     # no deployment given
     assert_raise(ArgumentError){
@@ -39,7 +39,7 @@ class Webistrano::LoggerTest < ActiveSupport::TestCase
     
   end
   
-  def test_log
+  test "log" do
     deployment = create_new_deployment(:stage => @stage_with_role, :task => 'deploy:setup')
     logger = Webistrano::Logger.new( deployment )
     
@@ -62,7 +62,7 @@ class Webistrano::LoggerTest < ActiveSupport::TestCase
     assert_equal "  * schu bi du\n*** schu bi du\n ** schu bi du\n    schu bi du\n", deployment.log
   end
   
-  def test_do_no_log_passwords
+  test "do_no_log_passwords" do
     pw_config = @stage_with_role.configuration_parameters.find_or_create_by_name('scm_password')
     pw_config.value = 'my_secret'
     pw_config.save!

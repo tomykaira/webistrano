@@ -1,7 +1,8 @@
+.bundle
+db/*.sqlite3
+log/*.log
+tmp/**/*
 config/*.yml
 config/webistrano_config.rb
-tmp/*
-log/*
-*~
 .DS_Store
-*.tmproj
+.rake_tasks~

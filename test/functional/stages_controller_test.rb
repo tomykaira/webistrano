@@ -8,17 +8,17 @@ class StagesControllerTest < ActionController::TestCase
     @user = login
   end
 
-  def test_should_get_index
+  test "should_get_index" do
     get :index, :project_id => @project.id 
     assert_response :success
   end
 
-  def test_should_get_new
+  test "should_get_new" do
     get :new, :project_id => @project.id
     assert_response :success
   end
   
-  def test_should_create_stage
+  test "should_create_stage" do
     old_count = Stage.count
     post :create, :stage => { :name => 'Beta' }, :project_id => @project.id
     assert_equal old_count+1, Stage.count
@@ -26,22 +26,22 @@ class StagesControllerTest < ActionController::TestCase
     assert_redirected_to project_stage_path(assigns(:project), assigns(:stage))
   end
 
-  def test_should_show_stage
+  test "should_show_stage" do
     get :show, :id => @stage.id, :project_id => @project.id
     assert_response :success
   end
 
-  def test_should_get_edit
+  test "should_get_edit" do
     get :edit, :id => @stage.id, :project_id => @project.id
     assert_response :success
   end
   
-  def test_should_update_stage
+  test "should_update_stage" do
     put :update, :id => @stage.id, :project_id => @project.id, :stage => { :name => 'Gamma' }
     assert_redirected_to project_stage_path(assigns(:project), assigns(:stage))
   end
   
-  def test_should_destroy_stage
+  test "should_destroy_stage" do
     old_count = Stage.count
     delete :destroy, :id => @stage.id, :project_id => @project.id
     assert_equal old_count-1, Stage.count
@@ -49,7 +49,7 @@ class StagesControllerTest < ActionController::TestCase
     assert_redirected_to project_path(@project)
   end
   
-  def test_capfile
+  test "capfile" do
     @project = create_new_project(:template => 'mongrel_rails', :name => 'Schumaker Levi')
     @stage = create_new_stage(:project => @project, :name => '123 Name')
     
@@ -91,19 +91,19 @@ class StagesControllerTest < ActionController::TestCase
     assert_match "foobar here", @response.body
   end
   
-  def test_should_show_stage_tasks
+  test "should_show_stage_tasks" do
     get :tasks, :id => @stage.id, :project_id => @project.id
     assert_response :success
     assert_match /webistrano:mongrel:start/, @response.body
   end
   
-  def test_should_render_xml_for_stage_tasks
+  test "should_render_xml_for_stage_tasks" do
     get :tasks, :id => @stage.id, :project_id => @project.id, :format => "xml"
     assert_response :success
     assert_match /webistrano:mongrel:start/, @response.body
   end
   
-  def test_index
+  test "index" do
     get :index, :project_id => @project.id, :format => 'xml'
     assert_response :success
     assert_select 'stages' do |elements|

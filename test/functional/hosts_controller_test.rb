@@ -6,7 +6,7 @@ class HostsControllerTest < ActionController::TestCase
     @host = create_new_host
   end
 
-  def test_should_get_index
+  test "should_get_index" do
     @user = login
     
     get :index
@@ -14,21 +14,21 @@ class HostsControllerTest < ActionController::TestCase
     assert assigns(:hosts)
   end
 
-  def test_non_admin_should_not_get_new
+  test "non_admin_should_not_get_new" do
     @user = login
     
     get :new
     assert_response :redirect
   end
   
-  def test_admin_should_get_new
+  test "admin_should_get_new" do
     @user = admin_login
     
     get :new
     assert_response :success
   end
   
-  def test_non_admin_should_not_create_host
+  test "non_admin_should_not_create_host" do
     @user = login
     
     old_count = Host.count
@@ -38,7 +38,7 @@ class HostsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
   
-  def test_admin_should_create_host
+  test "admin_should_create_host" do
     @user = admin_login
     
     old_count = Host.count
@@ -48,28 +48,28 @@ class HostsControllerTest < ActionController::TestCase
     assert_redirected_to host_path(assigns(:host))
   end
 
-  def test_should_show_host
+  test "should_show_host" do
     @user = login
     
     get :show, :id => @host.id
     assert_response :success
   end
 
-  def test_non_admin_should_not_get_edit
+  test "non_admin_should_not_get_edit" do
     @user = login
     
     get :edit, :id => @host.id
     assert_response :redirect
   end
   
-  def test_admin_should_get_edit
+  test "admin_should_get_edit" do
     @user = admin_login
     
     get :edit, :id => @host.id
     assert_response :success
   end
   
-  def test_non_admin_should_not_update_host
+  test "non_admin_should_not_update_host" do
     @user = login
     
     put :update, :id => @host.id, :host => { :name => 'map.example.com' }
@@ -78,7 +78,7 @@ class HostsControllerTest < ActionController::TestCase
     assert_not_equal 'map.example.com', @host.name  
   end
   
-  def test_admin_should_update_host
+  test "admin_should_update_host" do
     @user = admin_login
     
     put :update, :id => @host.id, :host => { :name => 'map.example.com' }
@@ -87,7 +87,7 @@ class HostsControllerTest < ActionController::TestCase
     assert_equal 'map.example.com', @host.name  
   end
   
-  def test_non_admin_should_not_destroy_host
+  test "non_admin_should_not_destroy_host" do
     @user = login
     
     old_count = Host.count
@@ -97,7 +97,7 @@ class HostsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
   
-  def test_should_destroy_host
+  test "should_destroy_host" do
     @user = admin_login
     
     old_count = Host.count

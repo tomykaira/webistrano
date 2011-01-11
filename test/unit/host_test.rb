@@ -6,7 +6,7 @@ class HostTest < ActiveSupport::TestCase
     Host.delete_all
   end
 
-  def test_creation
+  test "creation" do
     assert_equal 0, Host.count
     
     assert_nothing_raised{
@@ -16,20 +16,20 @@ class HostTest < ActiveSupport::TestCase
     assert_equal 1, Host.count
   end
   
-  def test_validation
+  test "validation" do
     h = Host.create!(:name => "192.168.0.1")
     
     # try to create another host with the same name
     h = Host.new(:name => "192.168.0.1")
     assert !h.valid?
-    assert_not_nil h.errors.on("name")
+    assert_not_empty h.errors["name"]
     
     # try to create a host with a name that is too long
     name = "com." * 251
     name = name.chop
     h = Host.new(:name => name)
     assert !h.valid?
-    assert_not_nil h.errors.on("name")
+    assert_not_empty h.errors["name"]
     
     # make it pass
     name = "example.com"
@@ -37,13 +37,13 @@ class HostTest < ActiveSupport::TestCase
     assert h.valid?
   end
   
-  def test_validation_of_name_if_ip
+  test "validation_of_name_if_ip" do
     # some valid IPs
     assert valid_host_name('192.168.0.1  ')
     assert valid_host_name(' 192.168.0.110')
   end
   
-  def test_validation_of_name_if_domain_name
+  test "validation_of_name_if_domain_name" do
     assert valid_host_name('map.example.com')
     assert valid_host_name('web12.example.com')
     assert valid_host_name('localhost')
@@ -53,7 +53,7 @@ class HostTest < ActiveSupport::TestCase
     assert invalid_host_name('mail*.#.example.com')
   end
   
-  def test_stages
+  test "stages" do
     host = create_new_host
     
     stage_1 = create_new_stage

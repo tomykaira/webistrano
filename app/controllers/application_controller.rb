@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  include BrowserFilters
   include ExceptionNotifiable
   include AuthenticatedSystem
   
@@ -47,7 +46,7 @@ class ApplicationController < ActionController::Base
       return true
     else
       flash[:notice] = "Action not allowed"
-      redirect_to home_path
+      redirect_to root_path
       return false
     end
   end
@@ -67,10 +66,9 @@ class ApplicationController < ActionController::Base
     reset_session
     if WebistranoConfig[:authentication_method] != :cas
       flash[:notice] = "You have been logged out."
-      redirect_back_or_default( home_path )
+      redirect_back_or_default( root_path )
     else
-      redirect_to "#{CASClient::Frameworks::Rails::Filter.config[:logout_url]}?serviceUrl=#{home_url}"
+      redirect_to "#{CASClient::Frameworks::Rails::Filter.config[:logout_url]}?serviceUrl=#{root_url}"
     end
   end
-  
 end

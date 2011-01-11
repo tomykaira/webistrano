@@ -7,23 +7,23 @@ class StageTest < ActiveSupport::TestCase
     @project = Project.create!(:name => 'Project 1', :template => 'rails')
   end
 
-  def test_creation_and_validation
+  test "creation_and_validation" do
     assert_equal 0, Stage.count
     
     s = Stage.new(:name => "Beta")
     
     # project is missing
     assert !s.valid?
-    assert_not_nil s.errors.on('project')
+    assert_not_empty s.errors['project']
     
   end
   
-  def test_validation
+  test "validation" do
     s = Stage.new(:name => "Beta")
     
     # project is missing
     assert !s.valid?
-    assert_not_nil s.errors.on('project')
+    assert_not_empty s.errors['project']
     
     # make it pass
     s.project = @project
@@ -33,21 +33,21 @@ class StageTest < ActiveSupport::TestCase
     s = Stage.new(:name => "Beta")
     s.project = @project
     assert !s.valid?
-    assert_not_nil s.errors.on("name")
+    assert_not_empty s.errors["name"]
     
     # try to create a stage with a name that is too long
     name = "x" * 251
     s = Stage.new(:name => name)
     s.project = @project
     assert !s.valid?
-    assert_not_nil s.errors.on("name")
+    assert_not_empty s.errors["name"]
 
     # make it pass
     s.name = name.chop
     assert s.save
   end
 
-  def test_deployment_possible_roles
+  test "deployment_possible_roles" do
     project = create_new_project(:template => 'rails')
     stage = create_new_stage(:project => project)
     assert stage.roles.blank?
@@ -63,7 +63,7 @@ class StageTest < ActiveSupport::TestCase
     assert_nil stage.deployment_problems[:roles]
   end
   
-  def test_deployment_possible_vars
+  test "deployment_possible_vars" do
     project = create_new_project(:template => 'rails')
     stage = create_new_stage(:project => project)
     role = create_new_role(:stage => stage)
@@ -112,7 +112,7 @@ class StageTest < ActiveSupport::TestCase
     
   end
   
-  def test_deployment_problems_can_be_called_with_explicit_check_with_deployment_possible
+  test "deployment_problems_can_be_called_with_explicit_check_with_deployment_possible" do
     stage = create_new_stage
     
     assert_nothing_raised{
@@ -120,7 +120,7 @@ class StageTest < ActiveSupport::TestCase
     }
   end
   
-  def test_configs_that_need_prompt
+  test "configs_that_need_prompt" do
     ProjectConfiguration.delete_all
     @stage = create_new_stage(:project => @project, :name => 'Production')
     @stage.reload
@@ -133,7 +133,7 @@ class StageTest < ActiveSupport::TestCase
     assert_equal 1, @stage.non_prompt_configurations.size
   end
   
-  def test_alert_emails_format
+  test "alert_emails_format" do
     stage = create_new_stage
     assert_nil stage.alert_emails
     
@@ -154,7 +154,7 @@ class StageTest < ActiveSupport::TestCase
     assert !stage.valid?
   end
   
-  def test_recent_deployments
+  test "recent_deployments" do
     stage = create_new_stage
     role = create_new_role(:stage => stage)
     5.times do 
@@ -166,12 +166,14 @@ class StageTest < ActiveSupport::TestCase
     assert_equal 2, stage.recent_deployments(2).size
   end
   
-  def test_webistrano_stage_name
+  test "webistrano_stage_name" do
     stage = create_new_stage(:name => '&my_ Pro ject')
     assert_equal '_my__pro_ject', stage.webistrano_stage_name
   end
   
-  def test_handle_corrupt_recipes
+  test "handle_corrupt_recipes" do
+    Open4.expects(:popen4)
+    
     stage = create_new_stage
     
     # create a recipe with invalid code
@@ -190,7 +192,7 @@ class StageTest < ActiveSupport::TestCase
     end
   end
   
-  def test_locking_methods
+  test "locking_methods" do
     stage = create_new_stage
     assert !stage.locked?
     
@@ -203,7 +205,7 @@ class StageTest < ActiveSupport::TestCase
     assert !stage.locked?
   end
   
-  def test_lock_info
+  test "lock_info" do
     stage = create_stage_with_role
     deployment = create_new_deployment(:stage => stage)
     stage.lock
@@ -216,7 +218,7 @@ class StageTest < ActiveSupport::TestCase
     assert_nil stage.locking_deployment
   end
   
-  def test_lock_with_can_not_be_called_without_being_locked
+  test "lock_with_can_not_be_called_without_being_locked" do
     stage = create_stage_with_role
     deployment = create_new_deployment(:stage => stage)
     assert !stage.locked?
@@ -226,7 +228,7 @@ class StageTest < ActiveSupport::TestCase
     end
   end
   
-  def test_locked_deployment_belongs_to_stage
+  test "locked_deployment_belongs_to_stage" do
     stage_1 = create_stage_with_role
     deployment_1 = create_new_deployment(:stage => stage_1)
     stage_2 = create_stage_with_role

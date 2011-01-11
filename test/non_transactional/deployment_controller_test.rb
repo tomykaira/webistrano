@@ -19,7 +19,7 @@ class DeploymentsControllerTest < Test::Unit::TestCase
     @user = login
   end
 
-  def test_locking_checked
+  test "locking_checked" do
     @stage.lock
     assert_no_difference "Deployment.count" do
       post :create, :deployment => { :task => 'deploy:default', :description => 'update to newest' }, :project_id => @project.id, :stage_id => @stage.id
@@ -28,7 +28,7 @@ class DeploymentsControllerTest < Test::Unit::TestCase
     assert_response :success
   end
   
-  def test_locking_override
+  test "locking_override" do
     @stage.lock
     assert_difference "Deployment.count" do
       post :create, :deployment => { :task => 'deploy:default', :description => 'update to newest', :override_locking => 1 }, :project_id => @project.id, :stage_id => @stage.id
@@ -37,7 +37,7 @@ class DeploymentsControllerTest < Test::Unit::TestCase
     assert_response :redirect
   end
   
-  def test_stage_locked_after_deploy
+  test "stage_locked_after_deploy" do
     assert !@stage.locked?
     assert_difference "Deployment.count" do
       post :create, :deployment => { :task => 'deploy:default', :description => 'update to newest' }, :project_id => @project.id, :stage_id => @stage.id

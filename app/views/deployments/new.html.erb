@@ -6,7 +6,7 @@
 
 <% flashed_errors(:deployment) %>
 
-<% form_for(:deployment, :url => project_stage_deployments_path(@project, @stage)) do |f| %>
+<%= form_for(:deployment, :url => project_stage_deployments_path(@project, @stage)) do |f| %>
 <div style="width:330px;">
   <p>
     <b>Task</b><br />
@@ -119,7 +119,7 @@
 <% end %>
 
 <% content_for(:breadcrumb) do %>
-  <% breadcrumb_box do %>
+  <%= breadcrumb_box do %>
     <%= link_to "Back to stage", project_stage_path(current_project, current_stage), :style => "float:right", :class => "arrow_link" %>
     <%= link_to "Projects", projects_path %> &gt; 
     Project <%= link_to current_project.name, project_path(current_project) %> &gt; 

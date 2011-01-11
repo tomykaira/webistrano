@@ -10,7 +10,7 @@ class DeploymentTest < ActiveSupport::TestCase
     @deployment = create_new_deployment(:stage => @stage, :roles => [@role_app, @role_web], :description => 'update code to newest')
   end
 
-  def test_creation
+  test "creation" do
     Deployment.delete_all
     assert_equal 0, Deployment.count
     
@@ -33,52 +33,52 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal 'running', d.status
   end
   
-  def test_validation
+  test "validation" do
     # task and stage missing
     d = Deployment.new
     assert !d.valid?
-    assert_not_nil d.errors.on('task')
-    assert_not_nil d.errors.on('stage')
-    assert_nil d.errors.on('description')
-    assert_not_nil d.errors.on('user')
+    assert_not_empty d.errors['task']
+    assert_not_empty d.errors['stage']
+    assert_empty d.errors['description']
+    assert_not_empty d.errors['user']
     
     # fix it
     d.stage = @stage
     assert !d.valid?
-    assert_not_nil d.errors.on('user')
-    assert_nil d.errors.on('description')
-    assert_not_nil d.errors.on('task')
-    assert_nil d.errors.on('stage')
+    assert_not_empty d.errors['user']
+    assert_empty d.errors['description']
+    assert_not_empty d.errors['task']
+    assert_empty d.errors['stage']
     d.task = 'deploy:setup'
     assert !d.valid?
-    assert_not_nil d.errors.on('user')
-    assert_nil d.errors.on('description')
-    assert_nil d.errors.on('task')
-    assert_nil d.errors.on('stage')
+    assert_not_empty d.errors['user']
+    assert_empty d.errors['description']
+    assert_empty d.errors['task']
+    assert_empty d.errors['stage']
     d.description = 'update to newest'
     assert !d.valid?
-    assert_not_nil d.errors.on('user')
-    assert_nil d.errors.on('description')
-    assert_nil d.errors.on('task')
-    assert_nil d.errors.on('stage')
+    assert_not_empty d.errors['user']
+    assert_empty d.errors['description']
+    assert_empty d.errors['task']
+    assert_empty d.errors['stage']
     
     d.user = create_new_user
     assert d.valid?
-    assert_nil d.errors.on('user')
-    assert_nil d.errors.on('description')
-    assert_nil d.errors.on('task')
-    assert_nil d.errors.on('stage')
+    assert_empty d.errors['user']
+    assert_empty d.errors['description']
+    assert_empty d.errors['task']
+    assert_empty d.errors['stage']
     
     # try status values
     d.status = 'bla'
     assert !d.valid?
-    assert_not_nil d.errors.on('status')
+    assert_not_empty d.errors['status']
     d.status = 'failed'
     assert d.valid?
-    assert_nil d.errors.on('status')
+    assert_empty d.errors['status']
   end
   
-  def test_completed_and_status_on_error
+  test "completed_and_status_on_error" do
     assert !@deployment.completed?
     assert !@deployment.success?
     assert_equal 'running', @deployment.status
@@ -95,7 +95,7 @@ class DeploymentTest < ActiveSupport::TestCase
     }
   end
   
-  def test_completed_and_status_on_success
+  test "completed_and_status_on_success" do
     assert !@deployment.completed?
     assert !@deployment.success?
     assert_equal 'running', @deployment.status
@@ -112,7 +112,7 @@ class DeploymentTest < ActiveSupport::TestCase
     }
   end
   
-  def test_validation_depends_on_stage_ready_to_deploy
+  test "validation_depends_on_stage_ready_to_deploy" do
     project = create_new_project(:template => 'rails')
     stage = create_new_stage(:project => project)
     role = create_new_role(:stage => stage)
@@ -139,10 +139,10 @@ class DeploymentTest < ActiveSupport::TestCase
     deployment.roles << role
     
     assert !deployment.valid?
-    assert_match /is not ready to deploy/, deployment.errors.on('stage')
+    assert_match /is not ready to deploy/, deployment.errors['stage'].first
   end
   
-  def test_check_of_stage_prompt_configuration_in_validation
+  test "check_of_stage_prompt_configuration_in_validation" do
     # add a config value that wants a promp
     @stage.configuration_parameters.build(:name => 'password', :prompt_on_deploy => 1).save!
     
@@ -156,24 +156,24 @@ class DeploymentTest < ActiveSupport::TestCase
     deployment.roles << @stage.roles
     
     assert !deployment.valid?
-    assert_not_nil deployment.errors.on('base')
-    assert_match /password/, deployment.errors.on('base').inspect
+    assert_not_empty deployment.errors['base']
+    assert_match /password/, deployment.errors['base'].inspect
     
     # now give empty pw
     deployment.prompt_config = {:password => ''}
     
     assert !deployment.valid?
-    assert_not_nil deployment.errors.on('base')
-    assert_match /password/, deployment.errors.on('base').inspect
+    assert_not_empty deployment.errors['base']
+    assert_match /password/, deployment.errors['base'].inspect
     
     # now give pw
     deployment.prompt_config = {:password => 'abc'}
     
     assert deployment.valid?, deployment.errors.inspect
-    assert_nil deployment.errors.on('base')
+    assert_empty deployment.errors['base']
   end
   
-  def test_prompt_config_init
+  test "prompt_config_init" do
     deployment = Deployment.new
     
     expected_prompt_config = {}
@@ -186,7 +186,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal expected_prompt_config, Deployment.find(dep.id).prompt_config
   end
   
-  def test_completion_alerts_per_mail_when_no_alert_emails_set
+  test "completion_alerts_per_mail_when_no_alert_emails_set" do
     # prepare ActionMailer
     emails = prepare_email
     
@@ -200,7 +200,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert emails.empty?
   end
   
-  def test_completion_alerts_per_mail_when_alert_emails_set_on_error
+  test "completion_alerts_per_mail_when_alert_emails_set_on_error" do
     # prepare ActionMailer
     emails = prepare_email
     
@@ -217,7 +217,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal 2, emails.size
   end
   
-  def test_repeat
+  test "repeat" do
     original = create_new_deployment(:stage => @stage, :description => 'this is foo', :task => 'foo:bar')
     
     repeater = original.repeat
@@ -226,7 +226,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal "Repetition of deployment #{original.id}: \n#{original.description}", repeater.description
   end
   
-  def test_excluded_hosts_accessor
+  test "excluded_hosts_accessor" do
     host = create_new_host
     deployment = create_new_deployment(:excluded_host_ids => [host.id], :stage => @stage)
 
@@ -237,7 +237,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal [host.id], deployment.excluded_host_ids
   end
   
-  def test_excluded_hosts
+  test "excluded_hosts" do
     host_1 = create_new_host
     host_2 = create_new_host
     stage = create_new_stage
@@ -258,7 +258,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal [role_web, role_db].map(&:id).sort, deployment.deploy_to_roles.map(&:id).sort
   end
   
-  def test_cannot_exclude_all_hosts
+  test "cannot_exclude_all_hosts" do
     stage = create_new_stage
     host = create_new_host
     role_app = create_new_role(:name => 'app', :stage => stage, :host => host)
@@ -271,10 +271,10 @@ class DeploymentTest < ActiveSupport::TestCase
     d.user = create_new_user
 
     assert !d.valid?
-    assert d.errors.on('base')
+    assert d.errors['base']
   end
   
-  def test_cancelling_possible
+  test "cancelling_possible" do
     deployment = create_new_deployment(:pid => nil, :stage => create_stage_with_role, :completed_at => nil)
     assert !deployment.cancelling_possible?
     
@@ -285,7 +285,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert !deployment.cancelling_possible?
   end
   
-  def test_cancel
+  test "cancel" do
     deployment = create_new_deployment(:pid => 5542, :stage => create_stage_with_role, :completed_at => nil)
     assert deployment.cancelling_possible?, deployment.inspect
     
@@ -299,14 +299,14 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal "canceled", deployment.status
   end
   
-  def test_cancel_handles_pid_gone
+  test "cancel_handles_pid_gone" do
     deployment = create_new_deployment(:pid => 5542, :stage => create_stage_with_role, :completed_at => nil)
     assert deployment.cancelling_possible?, deployment.inspect
     
     Process.expects(:kill).with("SIGINT", 5542)
     Process.expects(:kill).with("SIGKILL", 5542).raises("No such PID")
 
-    assert_nothing_raised do    
+    assert_nothing_raised do
       deployment.cancel!
     end
     
@@ -314,7 +314,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_equal "canceled", deployment.status
   end
   
-  def test_validation_fails_if_stage_locked
+  test "validation_fails_if_stage_locked" do
     stage = create_stage_with_role
     stage.lock
     
@@ -323,7 +323,7 @@ class DeploymentTest < ActiveSupport::TestCase
     end
   end
   
-  def test_validation_does_not_fails_if_stage_locked_but_we_override
+  test "validation_does_not_fails_if_stage_locked_but_we_override" do
     stage = create_stage_with_role
     stage.lock
     
@@ -335,7 +335,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert stage.locked?
   end
   
-  def test_completing_with_error_clears_the_stage_lock
+  test "completing_with_error_clears_the_stage_lock" do
     stage = create_stage_with_role
     deployment = create_new_deployment(:stage => stage, :completed_at => nil)
     assert deployment.running?
@@ -348,7 +348,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert !stage.locked?
   end
   
-  def test_completing_success_clears_the_stage_lock
+  test "completing_success_clears_the_stage_lock" do
     stage = create_stage_with_role
     deployment = create_new_deployment(:stage => stage, :completed_at => nil)
     assert deployment.running?
@@ -361,7 +361,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert !stage.locked?
   end
   
-  def test_completing_cancelled_clears_the_stage_lock
+  test "completing_cancelled_clears_the_stage_lock" do
     stage = create_stage_with_role
     deployment = create_new_deployment(:stage => stage, :completed_at => nil, :pid => 919999)
     assert deployment.running?
@@ -375,7 +375,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert !stage.locked?
   end
   
-  def test_effective_and_prompt_config
+  test "effective_and_prompt_config" do
     stage = create_stage_with_role
     stage.configuration_parameters.create!(:name => 'foo123', :value => '123')
     stage.configuration_parameters.create!(:name => 'promptme', :prompt_on_deploy => 1)

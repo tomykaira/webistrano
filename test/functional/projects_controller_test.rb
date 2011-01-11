@@ -6,7 +6,7 @@ class ProjectsControllerTest < ActionController::TestCase
     @project = create_new_project
   end
 
-  def test_should_get_index
+  test "should_get_index" do
     @user = login
     
     get :index
@@ -14,21 +14,21 @@ class ProjectsControllerTest < ActionController::TestCase
     assert assigns(:projects)
   end
 
-  def test_non_admin_should_not_get_new
+  test "non_admin_should_not_get_new" do
     @user = login
     
     get :new
     assert_response :redirect
   end
   
-  def test_admin_should_get_new
+  test "admin_should_get_new" do
     @user = admin_login
     
     get :new
     assert_response :success
   end
   
-  def test_non_admin_should_not_create_project
+  test "non_admin_should_not_create_project" do
     @user = login
     
     Project.delete_all
@@ -39,7 +39,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  def test_admin_should_create_project
+  test "admin_should_create_project" do
     @user = admin_login
     
     Project.delete_all
@@ -52,28 +52,28 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_not_nil Project.find(:first).configuration_parameters.find_by_name('scm_username')
   end
 
-  def test_should_show_project
+  test "should_show_project" do
     @user = login
         
     get :show, :id => @project.id
     assert_response :success
   end
 
-  def test_non_admin_should_not_get_edit
+  test "non_admin_should_not_get_edit" do
     @user = login
     
     get :edit, :id => @project.id
     assert_response :redirect
   end
   
-  def test_admin_should_get_edit
+  test "admin_should_get_edit" do
     @user = admin_login
     
     get :edit, :id => @project.id
     assert_response :success
   end
   
-  def test_non_admin_should_not_update_project
+  test "non_admin_should_not_update_project" do
     @user = login
     
     put :update, :id => @project.id, :project => { :name => 'Project Jochen', :template => 'mongrel_rails'}
@@ -82,7 +82,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_not_equal 'Project Jochen', @project.name
   end
   
-  def test_admin_should_update_project
+  test "admin_should_update_project" do
     @user = admin_login
     
     put :update, :id => @project.id, :project => { :name => 'Project Jochen', :template => 'mongrel_rails'}
@@ -91,7 +91,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_equal 'mongrel_rails', @project.template
   end
   
-  def test_non_admin_should_not_destroy_project
+  test "non_admin_should_not_destroy_project" do
     @user = login
     
     old_count = Project.count
@@ -101,7 +101,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
   
-  def test_admin_should_destroy_project
+  test "admin_should_destroy_project" do
     @user = admin_login
     
     old_count = Project.count
@@ -111,7 +111,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_redirected_to projects_path
   end
   
-  def test_clone
+  test "clone" do
     @user = admin_login
     @project.template = "mod_rails"
     @project.save!

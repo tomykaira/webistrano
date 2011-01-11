@@ -14,9 +14,7 @@ class Host < ActiveRecord::Base
     self.name = self.name.strip rescue nil
   end
   
-  def validate
-    errors.add("name", "is not a valid hostname or IP") unless ( valid_ip? || valid_hostname? )
-  end
+  validate :guard_valid_hostname_or_ip
   
   def valid_hostname?
     self.name =~ /\A[a-zA-Z0-9\_\-\.]+\Z/
@@ -28,6 +26,12 @@ class Host < ActiveRecord::Base
     else
       false
     end
+  end
+  
+private
+
+  def guard_valid_hostname_or_ip
+    errors.add("name", "is not a valid hostname or IP") unless ( valid_ip? || valid_hostname? )
   end
   
 end

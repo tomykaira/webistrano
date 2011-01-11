@@ -11,13 +11,13 @@ class DeploymentsControllerTest < ActionController::TestCase
     @user = login
   end
 
-  def test_should_get_new_if_deployment_possible
+  test "should_get_new_if_deployment_possible" do
     assert @stage.deployment_possible?
     get :new, :project_id => @project.id, :stage_id => @stage.id
     assert_response :success
   end
   
-  def test_should_not_get_new_if_deployment_not_possible
+  test "should_not_get_new_if_deployment_not_possible" do
     @stage.roles.clear
     assert !@stage.deployment_possible?
     
@@ -25,7 +25,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
   
-  def test_should_create_deployment_if_deployment_possbile
+  test "should_create_deployment_if_deployment_possbile" do
     Deployment.delete_all
     assert @stage.deployment_possible?
     
@@ -36,7 +36,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_redirected_to project_stage_deployment_path(@project, @stage, assigns(:deployment))
   end
   
-  def test_should_not_create_deployment_if_deployment_not_possbile
+  test "should_not_create_deployment_if_deployment_not_possbile" do
     @stage.roles.clear
     assert !@stage.deployment_possible?
     
@@ -47,12 +47,12 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_redirected_to project_stage_path(@project, @stage)
   end
 
-  def test_should_show_deployment
+  test "should_show_deployment" do
     get :show, :id => @deployment.id, :project_id => @project.id, :stage_id => @stage.id
     assert_response :success
   end
   
-  def test_given_task_name
+  test "given_task_name" do
     assert @stage.deployment_possible?
     
     get :new, :task => 'deploy:default' , :project_id => @project.id, :stage_id => @stage.id
@@ -60,7 +60,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_equal 'deploy:default', assigns(:deployment).task
   end
   
-  def test_prompt_before_deploy
+  test "prompt_before_deploy" do
     Deployment.delete_all
     assert @stage.deployment_possible?
     
@@ -84,7 +84,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_equal 1, Deployment.count
   end
   
-  def test_excluded_hosts
+  test "excluded_hosts" do
     Deployment.delete_all
     host_down = create_new_host
     down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
@@ -99,7 +99,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_equal [@role], deployment.deploy_to_roles
   end
 
-  def test_latest_deployment
+  test "latest_deployment" do
     Deployment.delete_all
     host_down = create_new_host
     down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
@@ -109,7 +109,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_equal "deploy:default", assigns(:deployment).task
   end
   
-  def test_latest_with_no_deployment
+  test "latest_with_no_deployment" do
     Deployment.delete_all
     host_down = create_new_host
     down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
@@ -117,7 +117,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert_response 404
   end
   
-  def test_cancel_doenst_respond_to_get
+  test "cancel_doenst_respond_to_get" do
     @deployment.pid = 123
     @deployment.save!
     assert @deployment.running?
@@ -129,7 +129,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     assert @deployment.running?
   end
   
-  def test_cancel
+  test "cancel" do
     @deployment.pid = 123
     @deployment.save!
     assert @deployment.running?

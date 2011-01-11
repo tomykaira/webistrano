@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
 
-  def test_creation
+  test "creation" do
     assert_equal 0, Project.count
     
     assert_nothing_raised{
@@ -12,20 +12,20 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal 1, Project.count
   end
   
-  def test_validation
+  test "validation" do
     p = Project.create(:name => "Project Alpha", :template => 'rails')
     assert p.save, p.errors.inspect + p.attributes.inspect
     
     # try to create another project with the same name
     p = Project.new(:name => "Project Alpha")
     assert !p.valid?
-    assert_not_nil p.errors.on("name")
+    assert_not_empty p.errors["name"]
     
     # try to create a project with a name that is too long
     name = "x" * 251
     p = Project.new(:name => name, :template => 'rails')
     assert !p.valid?
-    assert_not_nil p.errors.on("name")
+    assert_not_empty p.errors["name"]
     
     # make it pass
     name = name.chop
@@ -36,15 +36,15 @@ class ProjectTest < ActiveSupport::TestCase
     p = Project.new(:name => "Project XXXX")
     p.template = 'bla_bla'
     assert !p.valid?
-    assert_not_nil p.errors.on("template")
-    assert_match /is not/, p.errors.on("template")
+    assert_not_empty p.errors["template"]
+    assert_match /is not/, p.errors["template"].first
     
     # fix template validation
     p.template = 'rails'
     assert p.valid?
   end
   
-  def test_default_config
+  test "default_config" do
     # choose a template on project creation
     p = Project.new(:name => "Project Alpha")
     p.template = 'rails'
@@ -67,7 +67,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal 'project_alpha', p.configuration_parameters.find_by_name('application').value
   end
   
-  def test_tasks
+  test "tasks" do
     # choose a template on project creation
     p = Project.new(:name => "Project Alpha")
     p.template = 'mongrel_rails'
@@ -78,12 +78,12 @@ class ProjectTest < ActiveSupport::TestCase
     assert_match /namespace/, p.tasks
   end
   
-  def test_webistrano_project_name
+  test "webistrano_project_name" do
     project = create_new_project(:name => '&my_ Project')
     assert_equal '_my__project', project.webistrano_project_name
   end
   
-  def test_prepare_cloning
+  test "prepare_cloning" do
     original = create_new_project(:name => 'Some Project', :template => 'mod_rails', :description => "Dr. Foo")
     my = create_new_project(:template => 'mongrel_rails')
     
@@ -93,7 +93,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal original.template, my.template
   end
   
-  def test_clone
+  test "clone" do
     # setup
     original = create_new_project(:name => 'Some Project', :template => 'mod_rails')
     3.times do |i|
@@ -144,7 +144,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal host, cloned_stage_1.roles.first.host
   end
   
-  def test_recent_deployments
+  test "recent_deployments" do
     project = create_new_project
     
     stage_1 = create_new_stage(:project => project)
