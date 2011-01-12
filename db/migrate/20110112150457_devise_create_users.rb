@@ -5,7 +5,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.integer   :admin, :default => 0
       t.string    :time_zone, :default => 'UTC'
       t.timestamp :disabled
-      
+
       t.database_authenticatable :null => false
       t.recoverable
       t.rememberable

@@ -8,27 +8,27 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Webistrano
   class Application < Rails::Application
-  
-  
+
+
     # Make Active Record use UTC-base instead of local time
     config.time_zone = 'UTC'
     config.encoding = "utf-8"
-    config.filter_parameters += [:password, :password_confirmation]
-    
+    # config.filter_parameters += [:password, :password_confirmation]
+
     initializer "webistrano.load" do
       require 'webistrano'
     end
-    
+
     initializer "webistrano.configure" do
       require "#{Rails.root}/config/webistrano_config"
       config.secret_token = WebistranoConfig[:session_secret]
     end
-    
+
     initializer "webistrano.clean_stylsheet" do
       stylesheet = "#{Rails.root}/public/stylesheets/application.css"
       File.delete(stylesheet) if  File.exists?(stylesheet)
     end
-    
+
   end
 end
 

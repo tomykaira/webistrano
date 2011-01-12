@@ -6,7 +6,7 @@ require File.expand_path(File.dirname(__FILE__) + "/factories")
 
 
 class ActiveSupport::TestCase
-  
+
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
   #
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
@@ -14,9 +14,9 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
-  # 
+  #
   include Factories
-  
+
   def prepare_email
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
@@ -31,28 +31,28 @@ class ActiveSupport::TestCase
     sign_in :user, user
     return user
   end
-  
+
   def admin_login(user=nil)
     admin = login(user)
     admin.make_admin!
     return admin
   end
-  
+
   def assert_include(expected, value)
     assert_kind_of Array, value
     assert value.include?(expected)
   end
-  
+
   def assert_empty(value)
     assert_kind_of Array, value
     assert value.empty?
   end
-  
+
   def assert_not_empty(value)
     assert_kind_of Array, value
     assert !value.empty?
   end
-  
+
 end
 
 class ActionController::TestCase

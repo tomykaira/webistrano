@@ -10,6 +10,5 @@ User.create!(
   :login => 'admin',
   :email => 'admin@example.com',
   :password => 'admin!',
-  :password_confirmation => 'admin!',
-  :admin => 1
-)
+  :password_confirmation => 'admin!'
+).make_admin!
