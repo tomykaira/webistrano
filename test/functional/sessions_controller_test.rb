@@ -16,10 +16,10 @@ class SessionsControllerTest < ActionController::TestCase
     assert session[:user]
     assert_response :redirect
   end
-  
+
   test "should_not_login_if_disabled" do
     User.find_by_login('quentin').disable
-    
+
     post :create, :login => 'quentin', :password => 'test'
     assert_nil session[:user]
     assert_response :success
@@ -47,7 +47,7 @@ class SessionsControllerTest < ActionController::TestCase
     post :create, :login => 'quentin', :password => 'test', :remember_me => "0"
     assert_nil @response.cookies["auth_token"]
   end
-  
+
   test "should_delete_token_on_logout" do
     login_as :quentin
     get :destroy
@@ -78,18 +78,19 @@ class SessionsControllerTest < ActionController::TestCase
 
   test "should_render_the_version_xml" do
     login_as :quentin
-    get :version
+    get :version, :format => 'xml'
     assert_select "application" do |element|
       assert_select 'name', :text => "Webistrano"
       assert_select 'version', :text => WEBISTRANO_VERSION
     end
   end
-  
+
   protected
     def auth_token(token)
+      require 'cgi'
       CGI::Cookie.new('name' => 'auth_token', 'value' => token)
     end
-    
+
     def cookie_for(user)
       auth_token users(user).remember_token
     end

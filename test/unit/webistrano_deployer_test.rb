@@ -58,6 +58,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     mock_cap_config.stubs(:find_and_execute_task)
     mock_cap_config.stubs(:[])
     mock_cap_config.stubs(:fetch).with(:scm)
+    mock_cap_config.stubs(:fetch).with(:real_revision).returns('4943')
 
     # now the interesting part
     # variable setting
@@ -139,6 +140,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     mock_cap_config.stubs(:find_and_execute_task)
     mock_cap_config.stubs(:[])
     mock_cap_config.stubs(:fetch).with(:scm)
+    mock_cap_config.stubs(:fetch).with(:real_revision).returns('4943')
 
     # ignore vars
     mock_cap_config.stubs(:set)
@@ -192,6 +194,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     mock_cap_config.stubs(:find_and_execute_task)
     mock_cap_config.stubs(:[])
     mock_cap_config.stubs(:fetch).with(:scm)
+    mock_cap_config.stubs(:fetch).with(:real_revision).returns('4943')
 
     # ignore vars
     mock_cap_config.stubs(:set)
@@ -269,9 +272,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
 
   test "task_invokation_successful" do
-    prepare_config_mocks do
-      stubs(:fetch).with(:real_revision)
-    end
+    prepare_config_mocks
 
     @deployment = create_new_deployment(:stage => @stage, :task => 'deploy:update')
 
@@ -407,6 +408,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
       stubs(:find_and_execute_task)
       stubs(:[])
       stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision).returns('4943')
 
       # roles
       stubs(:role)
@@ -507,6 +509,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     mock_cap_config.stubs(:find_and_execute_task)
     mock_cap_config.stubs(:[])
     mock_cap_config.stubs(:fetch).with(:scm)
+    mock_cap_config.stubs(:fetch).with(:real_revision).returns('4943')
 
     # vars
     mock_cap_config.stubs(:set)
@@ -554,6 +557,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     mock_cap_config.stubs(:find_and_execute_task)
     mock_cap_config.stubs(:[])
     mock_cap_config.stubs(:fetch).with(:scm)
+    mock_cap_config.stubs(:fetch).with(:real_revision).returns('4943')
 
     # vars
     mock_cap_config.stubs(:set)
@@ -602,6 +606,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
       stubs(:find_and_execute_task)
       stubs(:[])
       stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision).returns('4943')
 
       # vars
       stubs(:set)
@@ -642,7 +647,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
       stubs(:[])
       stubs(:load)
       stubs(:fetch).with(:scm)
-      stubs(:fetch).with(:real_revision)
+      stubs(:fetch).with(:real_revision).returns('4943')
 
       # vars
       stubs(:set)
@@ -693,6 +698,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
       stubs(:find_and_execute_task)
       stubs(:[])
       stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision).returns('4943')
 
       # roles
       stubs(:role)
@@ -850,7 +856,6 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     # add a stage recipe
     recipe_body = <<-EOS
       namespace :foo do
-        desc "bar"
         task :bar do
           run 'foobar'
         end
@@ -858,6 +863,11 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     EOS
     recipe = create_new_recipe(:name => 'A new recipe', :body => recipe_body)
     @stage.recipes << recipe
+    @stage = Stage.find(@stage.id)
+
+    d = Deployment.new
+    d.stage = @stage
+    deployer = Webistrano::Deployer.new(d)
 
     assert_equal 26, deployer.list_tasks.size
     assert_equal 24, @stage.list_tasks.size # filter shell and invoke
@@ -917,6 +927,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
       stubs(:find_and_execute_task)
       stubs(:[])
       stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision).returns('4943')
 
       # vars
       stubs(:set)
@@ -959,6 +970,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
       stubs(:trigger)
       stubs(:[])
       stubs(:fetch).with(:scm)
+      stubs(:fetch).with(:real_revision).returns('4943')
 
       # vars
       stubs(:set)
