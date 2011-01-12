@@ -1,9 +1,8 @@
 class ApplicationController < ActionController::Base
   include ExceptionNotifiable
-  include AuthenticatedSystem
   
-  before_filter CASClient::Frameworks::Rails::Filter if WebistranoConfig[:authentication_method] == :cas
-  before_filter :login_from_cookie, :login_required, :ensure_not_disabled
+  before_filter :authenticate_user!
+  before_filter :ensure_not_disabled
   around_filter :set_timezone
 
   layout 'application'
@@ -19,7 +18,7 @@ class ApplicationController < ActionController::Base
   
   def set_timezone
     # default timezone is UTC
-    Time.zone = logged_in? ? ( current_user.time_zone rescue 'UTC'): 'UTC'
+    Time.zone = user_signed_in? ? ( current_user.time_zone rescue 'UTC'): 'UTC'
     yield
     Time.zone = 'UTC'
   end
@@ -42,7 +41,7 @@ class ApplicationController < ActionController::Base
   end
   
   def ensure_admin
-    if logged_in? && current_user.admin?
+    if user_signed_in? && current_user.admin?
       return true
     else
       flash[:notice] = "Action not allowed"
@@ -52,23 +51,13 @@ class ApplicationController < ActionController::Base
   end
   
   def ensure_not_disabled
-    if logged_in? && current_user.disabled?
-      logout
+    if user_signed_in? && current_user.disabled?
+      sign_out_all_scopes
+      redirect_to root_path
       return false
     else
       return true
     end
   end
   
-  def logout
-    self.current_user.forget_me if logged_in?
-    cookies.delete :auth_token
-    reset_session
-    if WebistranoConfig[:authentication_method] != :cas
-      flash[:notice] = "You have been logged out."
-      redirect_back_or_default( root_path )
-    else
-      redirect_to "#{CASClient::Frameworks::Rails::Filter.config[:logout_url]}?serviceUrl=#{root_url}"
-    end
-  end
 end

@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class SessionsControllerTest < ActionController::TestCase
-  include AuthenticatedTestHelper
 
   fixtures :users
 
@@ -58,7 +57,7 @@ class SessionsControllerTest < ActionController::TestCase
     users(:quentin).remember_me
     @request.cookies["auth_token"] = cookie_for(:quentin)
     get :new
-    assert @controller.send(:logged_in?)
+    assert @controller.send(:user_signed_in?)
   end
 
   test "should_fail_expired_cookie_login" do
@@ -66,14 +65,14 @@ class SessionsControllerTest < ActionController::TestCase
     users(:quentin).update_attribute :remember_token_expires_at, 1.day.ago
     @request.cookies["auth_token"] = cookie_for(:quentin)
     get :new
-    assert !@controller.send(:logged_in?)
+    assert !@controller.send(:user_signed_in?)
   end
 
   test "should_fail_cookie_login" do
     users(:quentin).remember_me
     @request.cookies["auth_token"] = auth_token('invalid_auth_token')
     get :new
-    assert !@controller.send(:logged_in?)
+    assert !@controller.send(:user_signed_in?)
   end
 
   test "should_render_the_version_xml" do

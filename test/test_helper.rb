@@ -3,7 +3,6 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
 require File.expand_path(File.dirname(__FILE__) + "/factories")
-require 'authenticated_test_helper'
 
 
 class ActiveSupport::TestCase
@@ -16,10 +15,7 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   # 
-  include AuthenticatedTestHelper
   include Factories
-
-  # Add more helper methods to be used by all tests here...
   
   def prepare_email
     ActionMailer::Base.delivery_method = :test
@@ -27,15 +23,17 @@ class ActiveSupport::TestCase
     ActionMailer::Base.deliveries = []
     return ActionMailer::Base.deliveries
   end
-  
+
+
+  # Add more helper methods to be used by all tests here...
   def login(user=nil)
-    user = user || create_new_user
-    @request.session[:user] = user.id
+    user ||= create_new_user
+    sign_in :user, user
     return user
   end
   
-  def admin_login
-    admin = login
+  def admin_login(user=nil)
+    admin = login(user)
     admin.make_admin!
     return admin
   end
@@ -54,4 +52,9 @@ class ActiveSupport::TestCase
     assert_kind_of Array, value
     assert !value.empty?
   end
+  
+end
+
+class ActionController::TestCase
+  include Devise::TestHelpers
 end

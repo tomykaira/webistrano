@@ -3,7 +3,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 class UserTest < ActiveSupport::TestCase
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead.
   # Then, you can remove it from this and the functional test.
-  include AuthenticatedTestHelper
   fixtures :users
 
   test "should_create_user" do
@@ -11,93 +10,6 @@ class UserTest < ActiveSupport::TestCase
       user = create_user
       assert !user.new_record?, "#{user.errors.full_messages.to_sentence}"
     end
-  end
-
-  test "should_require_login" do
-    assert_no_difference 'User.count' do
-      u = create_user(:login => nil)
-      assert !u.errors[:login].empty?
-    end
-  end
-
-  test "should_require_password" do
-    assert_no_difference 'User.count' do
-      u = create_user(:password => nil)
-      assert !u.errors[:password].empty?
-    end
-  end
-
-  test "should_require_password_confirmation" do
-    assert_no_difference 'User.count' do
-      u = create_user(:password_confirmation => nil)
-      assert !u.errors[:password_confirmation].empty?
-    end
-  end
-
-  test "should_require_email" do
-    assert_no_difference 'User.count' do
-      u = create_user(:email => nil)
-      assert !u.errors[:email].empty?
-    end
-  end
-  
-  test "should_not_authenticate_if_disabled" do
-    assert_equal users(:quentin), User.authenticate('quentin', 'test')
-    User.find_by_login("quentin").disable
-    assert_equal nil, User.authenticate('quentin', 'test')
-  end
-
-  test "should_reset_password" do
-    users(:quentin).update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    assert_equal users(:quentin), User.authenticate('quentin', 'new password')
-  end
-
-  test "should_not_rehash_password" do
-    users(:quentin).update_attributes(:login => 'quentin2')
-    assert_equal users(:quentin), User.authenticate('quentin2', 'test')
-  end
-
-  test "should_authenticate_user" do
-    assert_equal users(:quentin), User.authenticate('quentin', 'test')
-  end
-
-  test "should_set_remember_token" do
-    users(:quentin).remember_me
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-  end
-
-  test "should_unset_remember_token" do
-    users(:quentin).remember_me
-    assert_not_nil users(:quentin).remember_token
-    users(:quentin).forget_me
-    assert_nil users(:quentin).remember_token
-  end
-
-  test "should_remember_me_for_one_week" do
-    before = 1.week.from_now.utc
-    users(:quentin).remember_me_for 1.week
-    after = 1.week.from_now.utc
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-    assert users(:quentin).remember_token_expires_at.between?(before, after)
-  end
-
-  test "should_remember_me_until_one_week" do
-    time = 1.week.from_now.utc
-    users(:quentin).remember_me_until time
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-    assert_equal users(:quentin).remember_token_expires_at, time
-  end
-
-  test "should_remember_me_default_two_weeks" do
-    before = 2.weeks.from_now.utc
-    users(:quentin).remember_me
-    after = 2.weeks.from_now.utc
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-    assert users(:quentin).remember_token_expires_at.between?(before, after)
   end
   
   test "admin" do
@@ -158,15 +70,14 @@ class UserTest < ActiveSupport::TestCase
   
   test "disable_resets_remember_me" do
     user = create_new_user
-    user.remember_me
+    user.remember_me!
     
-    assert_not_nil user.remember_token
-    assert_not_nil user.remember_token_expires_at
+    assert_equal false, user.remember_expired?
     
     user.disable
+    user.reload
     
-    assert_nil user.remember_token
-    assert_nil user.remember_token_expires_at
+    assert_equal true, user.remember_expired?
   end
   
   test "enabled_named_scope" do
@@ -187,6 +98,6 @@ class UserTest < ActiveSupport::TestCase
 
   protected
     def create_user(options = {})
-      User.create({ :login => 'quire', :email => 'quire@example.com', :password => 'quire', :password_confirmation => 'quire' }.merge(options))
+      User.create({ :login => 'quire', :email => 'quire@example.com', :password => 'quire!', :password_confirmation => 'quire!' }.merge(options))
     end
 end

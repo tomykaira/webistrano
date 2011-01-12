@@ -16,7 +16,6 @@ module Webistrano
     config.filter_parameters += [:password, :password_confirmation]
     
     initializer "webistrano.load" do
-      require 'authenticated_system'
       require 'webistrano'
     end
     

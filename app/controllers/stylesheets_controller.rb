@@ -1,10 +1,6 @@
 class StylesheetsController < ApplicationController
   
-  skip_before_filter :login_required
-  if WebistranoConfig[:authentication_method] == :cas
-    skip_before_filter CASClient::Frameworks::Rails::Filter
-  end
-  
+  skip_before_filter :authenticate_user!
   caches_page :application
   
   def application
