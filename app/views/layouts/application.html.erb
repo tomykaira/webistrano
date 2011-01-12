@@ -15,7 +15,7 @@
   <div id="app_top">
     <div id="header">
       <div id="header_claim">Capistrano deployment the easy way</div>
-      <a href="<%= home_path %>"><%= image_tag('peritor_theme/webistrano_logo.gif', :border => '0')%></a>
+      <a href="<%= root_path %>"><%= image_tag('peritor_theme/webistrano_logo.gif', :border => '0')%></a>
     </div>
     <div id="main_content">
       <% if logged_in? %>
@@ -39,7 +39,7 @@
         <% end %>
 
         <%= yield :action_box %>
-        
+
         <%= yield  %>
       </div>
       <div class="clear"></div>
@@ -50,7 +50,7 @@
   <div id="footer">
     <div id="footer_logged">
       <% if logged_in? %>
-       Logged in as <%= link_to h(current_user.login), user_path(current_user) %> | <%= link_to 'Logout', logout_path %> 
+       Logged in as <%= link_to h(current_user.login), user_path(current_user) %> | <%= link_to 'Logout', logout_path %>
       <% end %>
     </div>
     Copyright &copy; 2007, 2008, 2009 | Version <%=h WEBISTRANO_VERSION %> | <a href="http://labs.peritor.com/webistrano" target="_blank">http://labs.peritor.com/webistrano</a>

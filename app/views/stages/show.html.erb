@@ -9,7 +9,7 @@
      <%= select_tag('task', options_for_select(@task_list)) %>
    </p>
    <p>
-     <%= link_to 'Execute', new_project_stage_deployment_path(current_project, @stage), :class => 'arrow_link', 
+     <%= link_to 'Execute', new_project_stage_deployment_path(current_project, @stage), :class => 'arrow_link',
          :onclick => "location.href='#{new_project_stage_deployment_path(current_project, @stage)}?task=' + $F('task'); return false" %> |
      <%= link_to 'Info', tasks_project_stage_path(current_project, @stage), :class => 'arrow_link',
          :onclick => "location.href='#{tasks_project_stage_path(current_project, @stage)}#' + $F('task'); return false" %>
@@ -38,10 +38,10 @@
 		  <%=h @stage.hosts.count %>
 		</p>
 		<br />
-		<%= link_to 'Edit stage', edit_project_stage_path(current_project, @stage), :class => 'arrow_link' %> | 
-		<%= link_to 'Delete stage', project_stage_path(current_project, @stage), :confirm => 'Are you sure?', :method => :delete, :class => 'arrow_link'  %> | 
-		<%= link_to 'Export capfile', {:action => 'capfile', :project_id => current_project, :id => @stage}, {:onclick => "loadWindow('#{url_for(:action => 'capfile', :project_id => current_project, :id => @stage)}'); return false", :class => 'arrow_link'} %>
-	</div>	
+		<%= link_to 'Edit stage', edit_project_stage_path(current_project, @stage), :class => 'arrow_link' %> |
+		<%= link_to 'Delete stage', project_stage_path(current_project, @stage), :confirm => 'Are you sure?', :method => :delete, :class => 'arrow_link'  %> |
+		<%= link_to 'Export capfile', {:action => 'capfile', :project_id => current_project, :id => @stage, :format => 'text'}, {:onclick => "loadWindow('#{url_for(:action => 'capfile', :project_id => current_project, :id => @stage, :format => 'text')}'); return false", :class => 'arrow_link'} %>
+	</div>
   <div class="box_bottom"></div>
 </div>
 
@@ -57,7 +57,7 @@
     <%= render(:partial => 'effective_config')%>
     <br />
   </div>
-  <%= link_to 'New configuration', new_project_stage_stage_configuration_path(current_project, @stage), :class => 'arrow_link' %> | 
+  <%= link_to 'New configuration', new_project_stage_stage_configuration_path(current_project, @stage), :class => 'arrow_link' %> |
   <a id="s_e_c" href="#" onclick="show_effective_config(); return false" class="arrow_link">Show effective configuration</a>
   <a id="h_e_c" href="#" onclick="hide_effective_config(); return false" class="arrow_link" style="display:none;">Hide effective configuration</a>
 </fieldset>
@@ -90,13 +90,13 @@
 <br />
 <% content_for(:page_scripts) do %>
  <script type="text/javascript">
- 
+
    function show_effective_config(){
      $('h_e_c').show();
      $('s_e_c').hide();
      $('effective_config').show();
    }
-   
+
    function hide_effective_config(){
       $('h_e_c').hide();
       $('s_e_c').show();
@@ -108,8 +108,8 @@
 <% content_for(:breadcrumb) do %>
   <%= breadcrumb_box do %>
     <%= link_to "Back to project", project_path(@project), :style => "float:right", :class => "arrow_link" %>
-    <%= link_to "Projects", projects_path %> &gt; 
-    Project <%= link_to current_project.name, project_path(current_project) %> &gt; 
+    <%= link_to "Projects", projects_path %> &gt;
+    Project <%= link_to current_project.name, project_path(current_project) %> &gt;
     Stage <%= link_to current_stage.name, project_stage_path(current_project, current_stage) %>
   <% end %>
 <% end %>

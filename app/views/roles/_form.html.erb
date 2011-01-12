@@ -22,7 +22,7 @@
 </p>
 <p>
   <b>Host</b><br />
-  <span class="<%= @role.errors['host'] ? 'fieldWithErrors' : '' %>">
+  <span class="<%= @role.errors['host'].empty? ? 'fieldWithErrors' : '' %>">
   <%= select('role', 'host_id', @host_choices, { :include_blank => true }, {:style => 'width:250px;'}) %>
   </span>
 </p>
@@ -45,35 +45,35 @@
 
 <% content_for(:page_scripts) do %>
   <script type="text/javascript">
-  
+
     Event.observe(window, 'load', function(){
       role_name();
       Event.observe('role_name', 'change', role_name);
       Event.observe('role_custom_name', 'change', role_custom_name);
     });
 
-  
+
     function role_name(){
       var name = $('role_name');
       var custom_name = $('role_custom_name');
-      
+
       if(name.value != ''){
         custom_name.disable();
       } else {
         custom_name.enable();
       }
     }
-    
+
     function role_custom_name(){
       var name = $('role_name');
       var custom_name = $('role_custom_name');
-      
+
       if(custom_name.value != ''){
         name.disable();
       } else {
         name.enable();
       }
     }
-  
+
   </script>
 <% end %>
