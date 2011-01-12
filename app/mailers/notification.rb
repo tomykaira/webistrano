@@ -11,7 +11,8 @@ class Notification < ActionMailer::Base
     
     mail(
       :to      => email,
-      :subject => "Deployment of #{deployment.stage.project.name}/#{deployment.stage.name} finished: #{deployment.status}"
+      :subject => "Deployment of #{deployment.stage.project.name}/#{deployment.stage.name} finished: #{deployment.status}",
+      :content_type => 'text/plain'
     )
   end
 end

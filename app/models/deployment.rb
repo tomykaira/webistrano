@@ -177,7 +177,7 @@ class Deployment < ActiveRecord::Base
   end
 
   def clear_lock_error
-    self.errors.instance_variable_get("@errors").delete('lock')
+    self.errors.delete('lock')
   end
 
 protected

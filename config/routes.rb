@@ -1,7 +1,7 @@
 Webistrano::Application.routes.draw do
   root :to => 'projects#dashboard'
 
-  # TODO: where is this used? -- fd
+  # TODO - where is this used? -- fd
   match ':controller/service.wsdl' => '#wsdl'
 
   resources :hosts

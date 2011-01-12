@@ -13,10 +13,14 @@ class NotificationTest < ActionMailer::TestCase
     assert stage.deployment_possible?, stage.deployment_problems.inspect
     deployment = create_new_deployment(:stage => stage, :task => 'deploy')
     
-    @expected.from = 'FooBar'
-    @expected.to   = 'foo@bar.com'
+    email = Notification.deployment(deployment, 'foo@bar.com').deliver
+    assert !ActionMailer::Base.deliveries.empty?
     
-    assert_equal @expected.encoded, Notification.deployment(deployment, 'foo@bar.com').encoded
+    assert_equal ['foo@bar.com'], email.to
+    assert_equal ["FooBar"], email.from
+    assert_equal "Deployment of #{stage.project.name}/#{stage.name} finished: running", email.subject
+    # assert_match /<h1>Welcome to example.com, #{user.name}<\/h1>/, email.encoded
+    # assert_match /Welcome to example.com, #{user.name}/, email.encoded
   end
 
 end

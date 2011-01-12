@@ -87,7 +87,6 @@ class SessionsControllerTest < ActionController::TestCase
 
   protected
     def auth_token(token)
-      require 'cgi'
       CGI::Cookie.new('name' => 'auth_token', 'value' => token)
     end
 

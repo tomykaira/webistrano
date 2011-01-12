@@ -170,7 +170,7 @@ module CASClient
             if controller.request.post? &&
                 controller.request.raw_post =~ 
                   /^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)<\/samlp:SessionIndex>/m
-              # TODO: Maybe check that the request came from the registered CAS server? Although this might be
+              # TODO - Maybe check that the request came from the registered CAS server? Although this might be
               #       pointless since it's easily spoofable...
               si = $~[1]
               log.debug "Intercepted logout request for CAS session #{si.inspect}."

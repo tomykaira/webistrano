@@ -23,7 +23,7 @@ class CasProxyCallbackController < ActionController::Base
     # call the action without any parameters (maybe to check if the server responds correctly)
     render :text => "Okay, the server is up, but please specify a pgtIou and pgtId." and return unless pgtIou and pgtId
     
-    # TODO: pstore contents should probably be encrypted...
+    # TODO - pstore contents should probably be encrypted...
     pstore = open_pstore
     
     pstore.transaction do
@@ -58,7 +58,7 @@ class CasProxyCallbackController < ActionController::Base
     
     render :text => pgt
     
-    # TODO: need to periodically clean the storage, otherwise it will just keep growing
+    # TODO - need to periodically clean the storage, otherwise it will just keep growing
     pstore.transaction do
       pstore.delete pgtIou
     end

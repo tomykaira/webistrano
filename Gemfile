@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
 
-# TODO: what are the direct dependencies? -- fd
+# TODO - what are the direct dependencies? -- fd
 gem 'net-ssh',         '2.0.15', :require => 'net/ssh'
 gem 'net-scp',         '1.0.2',  :require => 'net/scp'
 gem 'net-sftp',        '2.0.2',  :require => 'net/sftp'

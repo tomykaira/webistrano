@@ -187,7 +187,7 @@ module CASClient
         conn.get("#{uri.path}?#{uri.query}")
       end
       
-      #TODO: check to make sure that response code is 200 and handle errors otherwise
+      # TODO - check to make sure that response code is 200 and handle errors otherwise
       
       log.debug "CAS Responded with #{raw_res.inspect}:\n#{raw_res.body}"
       

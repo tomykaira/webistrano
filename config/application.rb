@@ -12,6 +12,8 @@ module Webistrano
   
     # Make Active Record use UTC-base instead of local time
     config.time_zone = 'UTC'
+    config.encoding = "utf-8"
+    config.filter_parameters += [:password, :password_confirmation]
     
     initializer "webistrano.load" do
       require 'authenticated_system'
@@ -32,13 +34,13 @@ module Webistrano
 end
 
 
-# TODO: is this needed? -- fd
+# TODO - is this needed? -- fd
 require 'open4'
 require 'capistrano/cli'
 require 'syntax/convertors/html'
 
 
 # set default time_zone to UTC
-# TODO: is this needed? -- fd
+# TODO - is this needed? -- fd
 ENV['TZ'] = 'UTC'
 Time.zone = 'UTC'
