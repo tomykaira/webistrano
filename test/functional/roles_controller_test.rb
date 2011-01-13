@@ -3,10 +3,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 class RolesControllerTest < ActionController::TestCase
 
   def setup
-    @project = create_new_project
-    @stage = create_new_stage(:project => @project)
-    @host = create_new_host
-    @role = create_new_role(:stage => @stage, :host => @host)
+    @project = Factory(:project)
+    @stage = Factory(:stage, :project => @project)
+    @host = Factory(:host)
+    @role = Factory(:role, :stage => @stage, :host => @host)
     @user = login
   end
 

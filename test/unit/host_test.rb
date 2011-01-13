@@ -54,15 +54,15 @@ class HostTest < ActiveSupport::TestCase
   end
   
   test "stages" do
-    host = create_new_host
+    host = Factory(:host)
     
-    stage_1 = create_new_stage
-      role_1 = create_new_role(:name => 'web', :stage => stage_1, :host => host)
-      role_2 = create_new_role(:name => 'app', :stage => stage_1, :host => host)
+    stage_1 = Factory(:stage)
+      role_1 = Factory(:role, :name => 'web', :stage => stage_1, :host => host)
+      role_2 = Factory(:role, :name => 'app', :stage => stage_1, :host => host)
       
-    stage_2 = create_new_stage
-      role_3 = create_new_role(:name => 'web', :stage => stage_2, :host => host)
-      role_4 = create_new_role(:name => 'app', :stage => stage_2, :host => host)  
+    stage_2 = Factory(:stage)
+      role_3 = Factory(:role, :name => 'web', :stage => stage_2, :host => host)
+      role_4 = Factory(:role, :name => 'app', :stage => stage_2, :host => host)  
       
     assert_equal 4, host.roles.count
     assert_equal 2, host.stages.uniq.size # XXX pure count does not work!!!

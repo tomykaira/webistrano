@@ -2,8 +2,6 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
-require File.expand_path(File.dirname(__FILE__) + "/factories")
-
 
 class ActiveSupport::TestCase
 
@@ -15,7 +13,6 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   #
-  include Factories
 
   def prepare_email
     ActionMailer::Base.delivery_method = :test
@@ -27,7 +24,7 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   def login(user=nil)
-    user ||= create_new_user
+    user ||= Factory(:user)
     sign_in :user, user
     return user
   end

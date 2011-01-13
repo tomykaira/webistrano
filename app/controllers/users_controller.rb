@@ -1,17 +1,20 @@
 class UsersController < ApplicationController
+  respond_to :html, :xml, :json
+  
   before_filter :ensure_admin, :only => [:new, :destroy, :create, :enable]
   before_filter :ensure_admin_or_my_entry, :only => [:edit, :update]
 
   # GET /users
   # GET /users.xml
   def index
-    @users = User.find(:all, :order => 'login ASC')
+    @users = User.order('login ASC')
+    respond_with(@users)
   end
 
   # GET /users/new
   def new
-    # render new.rhtml
     @user = User.new
+    respond_with(@user)
   end
 
   # POST /users
@@ -19,17 +22,12 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
 
-    respond_to do |format|
-      if @user.save
-        flash[:notice] = "Account created"
-        format.html { redirect_to @user }
-        format.xml  { head :created, :location => user_url(@user) }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @user.errors.to_xml }
-      end
+    if @user.save
+      flash[:notice] = "Account created"
+      respond_with(@user, :location => @user)
+    else
+      respond_with(@user)
     end
-
   end
 
   # GET /users/1
@@ -37,16 +35,13 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     @deployments = @user.deployments.recent
-
-    respond_to do |format|
-      format.html # show.rhtml
-      format.xml  { render :xml => @user.to_xml }
-    end
+    respond_with(@user)
   end
 
   # GET /users/edit/1
   def edit
     @user = User.find(params[:id])
+    respond_with(@user)
   end
 
   # PUT /users/1
@@ -58,15 +53,11 @@ class UsersController < ApplicationController
       params[:user].delete(:admin)
     end
 
-    respond_to do |format|
-      if @user.update_attributes(params[:user])
-        flash[:notice] = 'User was successfully updated.'
-        format.html { redirect_to user_url(@user) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @user.errors.to_xml }
-      end
+    if @user.update_attributes(params[:user])
+      flash[:notice] = 'User was successfully updated.'
+      respond_with(@user, :location => @user)
+    else
+      respond_with(@user)
     end
   end
 
@@ -76,28 +67,21 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 
     if @user.admin? && User.admins.count == 1
-      message = 'Can not disable last admin user.'
+      flash[:notice] = 'Can not disable last admin user.'
     else
       @user.disable!
-      message = 'User was successfully disabled.'
+      flash[:notice] = 'User was successfully disabled.'
     end
 
-    respond_to do |format|
-      flash[:notice] = message
-      format.html { redirect_to users_url }
-      format.xml  { head :ok }
-    end
+    respond_with(@user)
   end
 
   def enable
     @user = User.find(params[:id])
     @user.enable!
-    flash[:notice] = "The user was enabled"
 
-    respond_to do |format|
-      format.html { redirect_to users_path }
-      format.xml  { head :ok }
-    end
+    flash[:notice] = "The user was enabled"
+    respond_with(@user, :location => users_path)
   end
 
   # GET /users/1/deployments
@@ -106,13 +90,11 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @deployments = @user.deployments
 
-    respond_to do |format|
-      format.html # deployments.rhtml
-      format.xml  { render :xml => @user.deployments.to_xml }
-    end
+    respond_with(@deployments)
   end
 
-  protected
+private
+  
   def ensure_admin_or_my_entry
     if current_user.admin? || current_user.id == User.find(params[:id]).id
       return true

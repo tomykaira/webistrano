@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class HostsControllerTest < ActionController::TestCase
 
   def setup
-    @host = create_new_host
+    @host = Factory(:host)
   end
 
   test "should_get_index" do

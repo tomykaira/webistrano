@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 class ProjectConfigurationsControllerTest < ActionController::TestCase
 
   def setup
-    @project = create_new_project
-    @config = create_new_project_configuration(:project => @project)
+    @project = Factory(:project)
+    @config  = Factory(:project_configuration, :project => @project)
     @user = login
   end
 

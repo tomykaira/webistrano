@@ -79,13 +79,13 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   test "webistrano_project_name" do
-    project = create_new_project(:name => '&my_ Project')
+    project = Factory(:project, :name => '&my_ Project')
     assert_equal '_my__project', project.webistrano_project_name
   end
   
   test "prepare_cloning" do
-    original = create_new_project(:name => 'Some Project', :template => 'mod_rails', :description => "Dr. Foo")
-    my = create_new_project(:template => 'mongrel_rails')
+    original = Factory(:project, :name => 'Some Project', :template => 'mod_rails', :description => "Dr. Foo")
+    my = Factory(:project, :template => 'mongrel_rails')
     
     my.prepare_cloning(original)
     assert_equal "Clone of Some Project", my.name
@@ -95,15 +95,15 @@ class ProjectTest < ActiveSupport::TestCase
   
   test "clone" do
     # setup
-    original = create_new_project(:name => 'Some Project', :template => 'mod_rails')
+    original = Factory(:project, :name => 'Some Project', :template => 'mod_rails')
     3.times do |i|
-      create_new_project_configuration(:project => original, :name => "#{i}-project-conf", :value => "value-#{i}")
+      Factory(:project_configuration, :project => original, :name => "#{i}-project-conf", :value => "value-#{i}")
     end
-    stage_1 = create_new_stage(:project => original, :name => 'test')
-      create_new_stage_configuration(:stage => stage_1, :name => "stage1-conf", :value => "stage1-value")
-    stage_2 = create_new_stage(:project => original, :name => 'prod')
-      create_new_stage_configuration(:stage => stage_2, :name => "stage2-conf", :value => "stage2-value")
-    recipe = create_new_recipe
+    stage_1 = Factory(:stage, :project => original, :name => 'test')
+      Factory(:stage_configuration, :stage => stage_1, :name => "stage1-conf", :value => "stage1-value")
+    stage_2 = Factory(:stage, :project => original, :name => 'prod')
+      Factory(:stage_configuration, :stage => stage_2, :name => "stage2-conf", :value => "stage2-value")
+    recipe = Factory(:recipe)
     stage_1.recipes << recipe
     
     host = Host.new(:name => '192.168.0.1')
@@ -112,7 +112,7 @@ class ProjectTest < ActiveSupport::TestCase
     r.host = host
     r.save!
       
-    new_project = create_new_project
+    new_project = Factory(:project)
     new_project.clone(original)
     
     # check project configuration
@@ -145,18 +145,18 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   test "recent_deployments" do
-    project = create_new_project
+    project = Factory(:project)
     
-    stage_1 = create_new_stage(:project => project)
-    role = create_new_role(:stage => stage_1)
+    stage_1 = Factory(:stage, :project => project)
+    role = Factory(:role, :stage => stage_1)
     5.times do 
-      deployment = create_new_deployment(:stage => stage_1)
+      deployment = Factory(:deployment, :stage => stage_1)
     end
     
-    stage_2 = create_new_stage(:project => project)
-    role = create_new_role(:stage => stage_2)
+    stage_2 = Factory(:stage, :project => project)
+    role = Factory(:role, :stage => stage_2)
     5.times do 
-      deployment = create_new_deployment(:stage => stage_2)
+      deployment = Factory(:deployment, :stage => stage_2)
     end
     
     assert_equal 10, project.deployments.count

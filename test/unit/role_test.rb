@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class RoleTest < ActiveSupport::TestCase
 
   def setup
-    @stage = create_new_stage
+    @stage = Factory(:stage)
     @host = Host.new(:name => '192.168.0.1')
   end
 
@@ -79,7 +79,7 @@ class RoleTest < ActiveSupport::TestCase
   end
   
   test "primary" do
-    r = create_new_role(:name => 'app')
+    r = Factory(:role, :name => 'app')
     
     assert_equal 0, r.primary
     assert !r.primary?
@@ -101,14 +101,14 @@ class RoleTest < ActiveSupport::TestCase
   end
 
   test "setup_done_and_deployed" do
-    role = create_new_role(:stage => @stage , :host => @host)
+    role = Factory(:role, :stage => @stage , :host => @host)
     
     assert !role.setup_done?
     assert !role.deployed?
     assert_equal 'blank', role.status
     
     # create a failed setup deployment
-    setup_deployment = create_new_deployment(:stage => @stage, :roles => [role], :task => 'deploy:setup', :success => 0)
+    setup_deployment = Factory(:deployment, :stage => @stage, :roles => [role], :task => 'deploy:setup', :status => 'failed')
     role.reload
     
     assert !role.setup_done?
@@ -116,7 +116,7 @@ class RoleTest < ActiveSupport::TestCase
     assert_equal 'blank', role.status
     
     # create a succefull setup deployment
-    setup_deployment = create_new_deployment(:stage => @stage, :roles => [role], :task => 'deploy:setup')
+    setup_deployment = Factory(:deployment, :stage => @stage, :roles => [role], :task => 'deploy:setup')
     setup_deployment.complete_successfully!
     role.reload
     
@@ -125,7 +125,7 @@ class RoleTest < ActiveSupport::TestCase
     assert_equal 'setup done', role.status
     
     # create a failed default deployment
-    default_deployment = create_new_deployment(:stage => @stage, :roles => [role], :task => 'deploy:default', :success => 0)
+    default_deployment = Factory(:deployment, :stage => @stage, :roles => [role], :task => 'deploy:default', :status => 'failed')
     role.reload
     
     assert role.setup_done?
@@ -133,7 +133,7 @@ class RoleTest < ActiveSupport::TestCase
     assert_equal 'setup done', role.status
     
     # create a succefull default deployment
-    default_deployment = create_new_deployment(:stage => @stage, :roles => [role], :task => 'deploy:default')
+    default_deployment = Factory(:deployment, :stage => @stage, :roles => [role], :task => 'deploy:default')
     default_deployment.complete_successfully!
     role.reload
     
@@ -143,7 +143,7 @@ class RoleTest < ActiveSupport::TestCase
   end
   
   test "no_release" do
-    role = create_new_role(:name => 'app')
+    role = Factory(:role, :name => 'app')
     assert !role.no_release?
     
     role.no_release = 1
@@ -158,27 +158,27 @@ class RoleTest < ActiveSupport::TestCase
   end
   
   test "role_attribute_hash" do
-    role = create_new_role(:primary => 1, :no_release => 1)
+    role = Factory(:role, :primary => 1, :no_release => 1)
     exp_res = {:no_release => true, :primary => true}
     assert_equal exp_res, role.role_attribute_hash
     
-    role = create_new_role(:primary => 0, :no_release => 1)
+    role = Factory(:role, :primary => 0, :no_release => 1)
     exp_res = {:no_release => true}
     assert_equal exp_res, role.role_attribute_hash
     
-    role = create_new_role(:primary => 1, :no_release => 0)
+    role = Factory(:role, :primary => 1, :no_release => 0)
     exp_res = {:primary => true}
     assert_equal exp_res, role.role_attribute_hash
     
-    role = create_new_role(:primary => 0, :no_release => 0)
+    role = Factory(:role, :primary => 0, :no_release => 0)
     exp_res = {}
     assert_equal exp_res, role.role_attribute_hash
   end
   
   test "hostname_and_port" do
-    host = create_new_host(:name => 'schaka.com')
+    host = Factory(:host, :name => 'schaka.com')
     assert_equal 'schaka.com', host.name
-    role = create_new_role(:host => host)
+    role = Factory(:role, :host => host)
     
     assert_nil role.ssh_port
     assert_equal "schaka.com", role.hostname_and_port
@@ -191,8 +191,8 @@ class RoleTest < ActiveSupport::TestCase
   end
   
   test "custom_name" do
-    host = create_new_host
-    role = create_new_role(:host => host, :name => 'app')
+    host = Factory(:host)
+    role = Factory(:role, :host => host, :name => 'app')
     
     assert !role.custom_name?, "role '#{role.name}' not in #{Role::DEFAULT_NAMES.inspect}"
     
@@ -204,8 +204,8 @@ class RoleTest < ActiveSupport::TestCase
   end
   
   test "custom_name_validation" do
-    host = create_new_host
-    role = create_new_role(:host => host, :name => 'app')
+    host = Factory(:host)
+    role = Factory(:role, :host => host, :name => 'app')
     role.name = nil
     role.custom_name = 'michi'
     

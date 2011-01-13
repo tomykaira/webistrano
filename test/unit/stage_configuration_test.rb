@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 class StageConfigurationTest < ActiveSupport::TestCase
   
   test "uniqiness_of_name" do
-    p = create_new_project
-    s = create_new_stage(:project => p)
+    p = Factory(:project)
+    s = Factory(:stage, :project => p)
     
     # create a new parameter by hand
     config = s.configuration_parameters.build(:name => 'bla_bla', :value => 'blub_blub')

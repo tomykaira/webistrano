@@ -8,10 +8,10 @@ class NotificationTest < ActionMailer::TestCase
   test "sender_address" do
     Notification.webistrano_sender_address = "FooBar"
     
-    stage = create_new_stage
-    role = create_new_role(:stage => stage, :name => 'app')
+    stage = Factory(:stage)
+    role = Factory(:role, :stage => stage, :name => 'app')
     assert stage.deployment_possible?, stage.deployment_problems.inspect
-    deployment = create_new_deployment(:stage => stage, :task => 'deploy')
+    deployment = Factory(:deployment, :stage => stage, :task => 'deploy')
     
     email = Notification.deployment(deployment, 'foo@bar.com').deliver
     assert !ActionMailer::Base.deliveries.empty?

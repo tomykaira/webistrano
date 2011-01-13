@@ -3,11 +3,11 @@ require File.dirname(__FILE__) + '/../test_helper'
 class DeploymentTest < ActiveSupport::TestCase
 
   def setup
-    @stage = create_new_stage
-    @role_app = create_new_role(:name => 'app', :stage => @stage)
-    @role_web = create_new_role(:name => 'app', :stage => @stage)
+    @stage = Factory(:stage)
+    @role_app = Factory(:role, :name => 'app', :stage => @stage)
+    @role_web = Factory(:role, :name => 'app', :stage => @stage)
     
-    @deployment = create_new_deployment(:stage => @stage, :roles => [@role_app, @role_web], :description => 'update code to newest')
+    @deployment = Factory(:deployment, :stage => @stage, :roles => [@role_app, @role_web], :description => 'update code to newest')
   end
 
   test "creation" do
@@ -19,7 +19,7 @@ class DeploymentTest < ActiveSupport::TestCase
       d = Deployment.new(:task => 'deploy:setup') 
       d.stage = @stage
       d.description = "Update to newest version"
-      d.user = create_new_user
+      d.user = Factory(:user)
       d.save!
     }
     
@@ -62,7 +62,7 @@ class DeploymentTest < ActiveSupport::TestCase
     assert_empty d.errors['task']
     assert_empty d.errors['stage']
     
-    d.user = create_new_user
+    d.user = Factory(:user)
     assert d.valid?
     assert_empty d.errors['user']
     assert_empty d.errors['description']
@@ -113,16 +113,16 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "validation_depends_on_stage_ready_to_deploy" do
-    project = create_new_project(:template => 'rails')
-    stage = create_new_stage(:project => project)
-    role = create_new_role(:stage => stage)
+    project = Factory(:project, :template => 'rails')
+    stage = Factory(:stage, :project => project)
+    role = Factory(:role, :stage => stage)
     
     assert stage.deployment_possible?
     
     deployment = Deployment.new(:task => 'shell')
     deployment.stage = stage
     deployment.description = 'description'
-    deployment.user = create_new_user
+    deployment.user = Factory(:user)
     deployment.roles << role
     
     assert deployment.valid?
@@ -152,7 +152,7 @@ class DeploymentTest < ActiveSupport::TestCase
     deployment.stage = @stage
     deployment.task = 'deploy'
     deployment.description = 'bugfix'
-    deployment.user = create_new_user
+    deployment.user = Factory(:user)
     deployment.roles << @stage.roles
     
     assert !deployment.valid?
@@ -179,7 +179,7 @@ class DeploymentTest < ActiveSupport::TestCase
     expected_prompt_config = {}
     assert_equal expected_prompt_config, deployment.prompt_config
     
-    dep = create_new_deployment(:stage => @stage)
+    dep = Factory(:deployment, :stage => @stage)
     
     assert Deployment.count > 0
     
@@ -190,7 +190,7 @@ class DeploymentTest < ActiveSupport::TestCase
     # prepare ActionMailer
     emails = prepare_email
     
-    @deployment = create_new_deployment(:stage => @stage)
+    @deployment = Factory(:deployment, :stage => @stage)
     
     # no alert emails set
     assert_nil @stage.alert_emails
@@ -204,7 +204,7 @@ class DeploymentTest < ActiveSupport::TestCase
     # prepare ActionMailer
     emails = prepare_email
     
-    @deployment = create_new_deployment(:stage => @stage)
+    @deployment = Factory(:deployment, :stage => @stage)
     
     # alert emails set
     @stage.alert_emails = "michael@example.com you@example.com"
@@ -218,7 +218,7 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "repeat" do
-    original = create_new_deployment(:stage => @stage, :description => 'this is foo', :task => 'foo:bar')
+    original = Factory(:deployment, :stage => @stage, :description => 'this is foo', :task => 'foo:bar')
     
     repeater = original.repeat
     
@@ -227,8 +227,8 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "excluded_hosts_accessor" do
-    host = create_new_host
-    deployment = create_new_deployment(:excluded_host_ids => [host.id], :stage => @stage)
+    host = Factory(:host)
+    deployment = Factory(:deployment, :excluded_host_ids => [host.id], :stage => @stage)
 
     assert_equal [host.id], deployment.excluded_host_ids
     assert_equal [host], deployment.excluded_hosts
@@ -238,16 +238,16 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "excluded_hosts" do
-    host_1 = create_new_host
-    host_2 = create_new_host
-    stage = create_new_stage
-    role_app = create_new_role(:name => 'app', :stage => stage, :host => host_1)
-    role_web = create_new_role(:name => 'web', :stage => stage, :host => host_2)
-    role_db = create_new_role(:name => 'db', :stage => stage, :host => host_2)
+    host_1 = Factory(:host)
+    host_2 = Factory(:host)
+    stage = Factory(:stage)
+    role_app = Factory(:role, :name => 'app', :stage => stage, :host => host_1)
+    role_web = Factory(:role, :name => 'web', :stage => stage, :host => host_2)
+    role_db = Factory(:role, :name => 'db', :stage => stage, :host => host_2)
     
     stage.reload
     assert_equal 3, stage.roles.count
-    deployment = create_new_deployment(
+    deployment = Factory(:deployment, 
                   :stage => stage, 
                   :excluded_host_ids => [host_1.id])
     
@@ -259,23 +259,23 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "cannot_exclude_all_hosts" do
-    stage = create_new_stage
-    host = create_new_host
-    role_app = create_new_role(:name => 'app', :stage => stage, :host => host)
+    stage = Factory(:stage)
+    host = Factory(:host)
+    role_app = Factory(:role, :name => 'app', :stage => stage, :host => host)
     
     d = Deployment.new
     d.task = 'foo'
     d.stage = stage
     d.description = 'foo bar'
     d.excluded_host_ids = role_app.host.id
-    d.user = create_new_user
+    d.user = Factory(:user)
 
     assert !d.valid?
     assert d.errors['base']
   end
   
   test "cancelling_possible" do
-    deployment = create_new_deployment(:pid => nil, :stage => create_stage_with_role, :completed_at => nil)
+    deployment = Factory(:deployment, :pid => nil, :stage => Factory(:role, :name => 'app').stage, :completed_at => nil)
     assert !deployment.cancelling_possible?
     
     deployment.pid = 123
@@ -286,7 +286,7 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "cancel" do
-    deployment = create_new_deployment(:pid => 5542, :stage => create_stage_with_role, :completed_at => nil)
+    deployment = Factory(:deployment, :pid => 5542, :stage => Factory(:role, :name => 'app').stage, :completed_at => nil)
     assert deployment.cancelling_possible?, deployment.inspect
     
     Process.expects(:kill).with("SIGINT", 5542)
@@ -300,7 +300,7 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "cancel_handles_pid_gone" do
-    deployment = create_new_deployment(:pid => 5542, :stage => create_stage_with_role, :completed_at => nil)
+    deployment = Factory(:deployment, :pid => 5542, :stage => Factory(:role, :name => 'app').stage, :completed_at => nil)
     assert deployment.cancelling_possible?, deployment.inspect
     
     Process.expects(:kill).with("SIGINT", 5542)
@@ -315,20 +315,20 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "validation_fails_if_stage_locked" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     stage.lock
     
     assert_raise(ActiveRecord::RecordInvalid) do
-      deployment = create_new_deployment(:stage => stage)
+      deployment = Factory(:deployment, :stage => stage)
     end
   end
   
   test "validation_does_not_fails_if_stage_locked_but_we_override" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     stage.lock
     
     assert_nothing_raised do
-      deployment = create_new_deployment(:stage => stage, :override_locking => 1)
+      deployment = Factory(:deployment, :stage => stage, :override_locking => 1)
     end
     
     stage.reload
@@ -336,8 +336,8 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "completing_with_error_clears_the_stage_lock" do
-    stage = create_stage_with_role
-    deployment = create_new_deployment(:stage => stage, :completed_at => nil)
+    stage = Factory(:role, :name => 'app').stage
+    deployment = Factory(:deployment, :stage => stage, :completed_at => nil)
     assert deployment.running?
 
     stage.lock
@@ -349,8 +349,8 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "completing_success_clears_the_stage_lock" do
-    stage = create_stage_with_role
-    deployment = create_new_deployment(:stage => stage, :completed_at => nil)
+    stage = Factory(:role, :name => 'app').stage
+    deployment = Factory(:deployment, :stage => stage, :completed_at => nil)
     assert deployment.running?
 
     stage.lock
@@ -362,8 +362,8 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "completing_cancelled_clears_the_stage_lock" do
-    stage = create_stage_with_role
-    deployment = create_new_deployment(:stage => stage, :completed_at => nil, :pid => 919999)
+    stage = Factory(:role, :name => 'app').stage
+    deployment = Factory(:deployment, :stage => stage, :completed_at => nil, :pid => 919999)
     assert deployment.running?
     stage.lock
     
@@ -376,7 +376,7 @@ class DeploymentTest < ActiveSupport::TestCase
   end
   
   test "effective_and_prompt_config" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     stage.configuration_parameters.create!(:name => 'foo123', :value => '123')
     stage.configuration_parameters.create!(:name => 'promptme', :prompt_on_deploy => 1)
     stage.project.configuration_parameters.create!(:name => 'bar-123', :value => '123')
@@ -385,7 +385,7 @@ class DeploymentTest < ActiveSupport::TestCase
     deployment.stage = stage
     deployment.task = 'deploy'
     deployment.description = 'bugfix'
-    deployment.user = create_new_user
+    deployment.user = Factory(:user)
     deployment.roles << stage.roles
     deployment.prompt_config = {'promptme' => '098'}
     

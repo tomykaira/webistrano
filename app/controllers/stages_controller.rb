@@ -1,13 +1,12 @@
 class StagesController < ApplicationController
+  respond_to :html, :xml, :json
 
   before_filter :load_project
 
   # GET /projects/1/stages.xml
   def index
     @stages = current_project.stages
-    respond_to do |format|
-      format.xml  { render :xml => @stages.to_xml }
-    end
+    respond_with(@stages)
   end
 
   # GET /projects/1/stages/1
@@ -15,21 +14,19 @@ class StagesController < ApplicationController
   def show
     @stage = current_project.stages.find(params[:id])
     @task_list = [['All tasks: ', '']] + @stage.list_tasks.collect{|task| [task[:name], task[:name]]}.sort()
-
-    respond_to do |format|
-      format.html # show.rhtml
-      format.xml  { render :xml => @stage.to_xml }
-    end
+    respond_with(@stage)
   end
 
   # GET /projects/1/stages/new
   def new
     @stage = current_project.stages.new
+    respond_with(@stage)
   end
 
   # GET /projects/1/stages/1;edit
   def edit
     @stage = current_project.stages.find(params[:id])
+    respond_with(@stage)
   end
 
   # GET /projects/1/stages/1/tasks
@@ -38,10 +35,7 @@ class StagesController < ApplicationController
     @stage = current_project.stages.find(params[:id])
     @tasks = @stage.list_tasks
 
-    respond_to do |format|
-      format.html # tasks.rhtml
-      format.xml  { render :xml => @tasks.to_xml }
-    end
+    respond_with(@tasks)
   end
 
   # POST /projects/1/stages
@@ -49,15 +43,11 @@ class StagesController < ApplicationController
   def create
     @stage = current_project.stages.build(params[:stage])
 
-    respond_to do |format|
-      if @stage.save
-        flash[:notice] = 'Stage was successfully created.'
-        format.html { redirect_to project_stage_url(current_project, @stage) }
-        format.xml  { head :created, :location => project_stage_url(current_project, @stage) }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @stage.errors.to_xml }
-      end
+    if @stage.save
+      flash[:notice] = 'Stage was successfully created.'
+      respond_with(@stage, :location => [current_project, @stage])
+    else
+      respond_with(@stage)
     end
   end
 
@@ -66,15 +56,11 @@ class StagesController < ApplicationController
   def update
     @stage = current_project.stages.find(params[:id])
 
-    respond_to do |format|
-      if @stage.update_attributes(params[:stage])
-        flash[:notice] = 'Stage was successfully updated.'
-        format.html { redirect_to project_stage_url(current_project, @stage) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @stage.errors.to_xml }
-      end
+    if @stage.update_attributes(params[:stage])
+      flash[:notice] = 'Stage was successfully updated.'
+      respond_with(@stage, :location => [current_project, @stage])
+    else
+      respond_with(@stage)
     end
   end
 
@@ -84,11 +70,8 @@ class StagesController < ApplicationController
     @stage = current_project.stages.find(params[:id])
     @stage.destroy
 
-    respond_to do |format|
-      flash[:notice] = 'Stage was successfully deleted.'
-      format.html { redirect_to project_url(current_project) }
-      format.xml  { head :ok }
-    end
+    flash[:notice] = 'Stage was successfully deleted.'
+    respond_with(@stage, :location => current_project)
   end
 
   # GET /projects/1/stages/1/capfile
@@ -96,9 +79,8 @@ class StagesController < ApplicationController
   def capfile
     @stage = current_project.stages.find(params[:id])
 
-    respond_to do |format|
+    respond_with(@stage) do |format|
       format.text { render :layout => false, :content_type => 'text/plain' }
-      format.xml  { render :xml => @stage.to_xml }
     end
   end
 

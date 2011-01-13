@@ -9,11 +9,11 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "locking_of_stage_through_lock_and_fire" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     assert !stage.locked?
     
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = create_new_user
+      deployment.user  = Factory(:user)
       deployment.stage = stage
       deployment.task  = 'deploy'
     end
@@ -24,10 +24,10 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "lock_and_fire_handles_transaction_abort" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = create_new_user
+      deployment.user  = Factory(:user)
       deployment.stage = stage
       deployment.task  = 'deploy'
       deployment.expects(:save!).raises(ActiveRecord::RecordInvalid)
@@ -39,10 +39,10 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "lock_and_fire_sets_locking_deployment" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = create_new_user(:login => 'MasterBlaster')
+      deployment.user  = Factory(:user, :login => 'MasterBlaster')
       deployment.stage = stage
       deployment.task  = 'deploy'
     end
@@ -55,10 +55,10 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "lock_and_fire_handles_transaction_abort_if_stage_breaks" do
-    stage = create_stage_with_role
+    stage = Factory(:role, :name => 'app').stage
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = create_new_user
+      deployment.user  = Factory(:user)
       deployment.stage = stage
       deployment.task  = 'deploy'
       Stage.any_instance.stubs(:lock).raises(ActiveRecord::RecordInvalid)

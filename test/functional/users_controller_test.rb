@@ -32,10 +32,10 @@ class UsersControllerTest < ActionController::TestCase
 
   test "non_admins_can_not_delete_users" do
     User.delete_all
-    user_1 = create_new_user(:login => 'user_1')
-    user_2 = create_new_user(:login => 'user_2')
-    user_3 = create_new_user(:login => 'user_3')
-    admin = create_new_user(:login => 'admin')
+    user_1 = Factory(:user, :login => 'user_1')
+    user_2 = Factory(:user, :login => 'user_2')
+    user_3 = Factory(:user, :login => 'user_3')
+    admin = Factory(:user, :login => 'admin')
     admin.make_admin!
 
     # login as non-admin
@@ -49,10 +49,10 @@ class UsersControllerTest < ActionController::TestCase
 
   test "admins_can_delete_users" do
     User.delete_all
-    user_1 = create_new_user
-    user_2 = create_new_user
-    user_3 = create_new_user
-    admin = create_new_user
+    user_1 = Factory(:user)
+    user_2 = Factory(:user)
+    user_3 = Factory(:user)
+    admin = Factory(:user)
     admin.make_admin!
 
     assert admin.admin?
@@ -62,8 +62,8 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "admin_status_can_not_be_set_by_non_admins" do
-    user_1 = create_new_user
-    user_2 = create_new_user
+    user_1 = Factory(:user)
+    user_2 = Factory(:user)
 
     assert !user_1.admin?
     assert !user_2.admin?
@@ -77,9 +77,9 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "admin_status_can_be_set_by_admins" do
-    admin = create_new_user
+    admin = Factory(:user)
     admin.make_admin!
-    user_2 = create_new_user
+    user_2 = Factory(:user)
 
     assert admin.admin?
     assert !user_2.admin?
@@ -94,11 +94,11 @@ class UsersControllerTest < ActionController::TestCase
 
   test "always_one_admin_left" do
     User.delete_all
-    admin = create_new_user
+    admin = Factory(:user)
     admin.make_admin!
-    admin_2 = create_new_user
+    admin_2 = Factory(:user)
     admin_2.make_admin!
-    user = create_new_user
+    user = Factory(:user)
 
     assert_equal 3, User.count
 
@@ -140,7 +140,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "user_not_can_edit_other" do
     user = login
-    other = create_new_user
+    other = Factory(:user)
 
     get :edit, :id => other.id
     assert_response :redirect
@@ -152,7 +152,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "destroy_should_only_mark_as_disabled" do
     user = admin_login
-    other = create_new_user
+    other = Factory(:user)
     assert !other.disabled?
 
     assert_difference "User.disabled.count" do
@@ -166,7 +166,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "enable" do
     user = admin_login
-    other = create_new_user
+    other = Factory(:user)
     other.disable!
 
     post :enable, :id => other.id
@@ -178,7 +178,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "enable_only_admin" do
     user = login
-    other = create_new_user
+    other = Factory(:user)
     other.disable!
 
     post :enable, :id => other.id
@@ -198,12 +198,12 @@ class UsersControllerTest < ActionController::TestCase
     assert_redirected_to root_path
   end
 
+private
 
-  protected
-    def create_user(options = {})
-      options = ({ :login => 'quire', :email => 'quire@example.com',
-        :password => 'quire!', :password_confirmation => 'quire!' }.merge(options))
-      yield(options) if block_given?
-      post :create, :user => options
-    end
+  def create_user(options = {})
+    options = ({ :login => 'quire', :email => 'quire@example.com',
+      :password => 'quire!', :password_confirmation => 'quire!' }.merge(options))
+    post :create, :user => options
+  end
+
 end

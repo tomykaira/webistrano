@@ -3,9 +3,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 class StageConfigurationsControllerTest < ActionController::TestCase
 
   def setup
-    @project = create_new_project
-    @stage = create_new_stage(:project => @project)
-    @config = create_new_stage_configuration(:stage => @stage)
+    @project = Factory(:project)
+    @stage = Factory(:stage, :project => @project)
+    @config = Factory(:stage_configuration, :stage => @stage)
     @user = login
   end
 

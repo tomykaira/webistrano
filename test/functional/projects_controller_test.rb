@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class ProjectsControllerTest < ActionController::TestCase
 
   def setup
-    @project = create_new_project
+    @project = Factory(:project)
   end
 
   test "should_get_index" do

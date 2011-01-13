@@ -11,10 +11,10 @@ class DeploymentsControllerTest < Test::Unit::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     
-    @project = create_new_project(:name => 'Project X')
-    @stage = create_new_stage(:name => 'Prod', :project => @project)
-    @role = create_new_role(:name => 'web', :stage => @stage)
-    @deployment = create_new_deployment(:task => 'deploy:setup', :stage => @stage)
+    @project = Factory(:project, :name => 'Project X')
+    @stage = Factory(:stage, :name => 'Prod', :project => @project)
+    @role = Factory(:role, :name => 'web', :stage => @stage)
+    @deployment = Factory(:deployment, :task => 'deploy:setup', :stage => @stage)
     
     @user = login
   end

@@ -3,10 +3,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 class DeploymentsControllerTest < ActionController::TestCase
 
   def setup
-    @project = create_new_project(:name => 'Project X')
-    @stage = create_new_stage(:name => 'Prod', :project => @project)
-    @role = create_new_role(:name => 'web', :stage => @stage)
-    @deployment = create_new_deployment(:task => 'deploy:setup', :stage => @stage)
+    @project = Factory(:project, :name => 'Project X')
+    @stage = Factory(:stage, :name => 'Prod', :project => @project)
+    @role = Factory(:role, :name => 'web', :stage => @stage)
+    @deployment = Factory(:deployment, :task => 'deploy:setup', :stage => @stage)
 
     @user = login
   end
@@ -86,8 +86,8 @@ class DeploymentsControllerTest < ActionController::TestCase
 
   test "excluded_hosts" do
     Deployment.delete_all
-    host_down = create_new_host
-    down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
+    host_down = Factory(:host)
+    down_role = Factory(:role, :stage => @stage, :name => 'foo', :host => host_down)
 
     assert_equal 2, @stage.roles.count
 
@@ -101,8 +101,8 @@ class DeploymentsControllerTest < ActionController::TestCase
 
   test "latest_deployment" do
     Deployment.delete_all
-    host_down = create_new_host
-    down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
+    host_down = Factory(:host)
+    down_role = Factory(:role, :stage => @stage, :name => 'foo', :host => host_down)
     post :create, :deployment => { :task => 'deploy:default', :description => 'update to newest', :prompt_config => {} }, :project_id => @project.id, :stage_id => @stage.id
     get :latest, :project_id => @project.id, :stage_id => @stage.id
     assert_response :redirect
@@ -111,8 +111,8 @@ class DeploymentsControllerTest < ActionController::TestCase
 
   test "latest_with_no_deployment" do
     Deployment.delete_all
-    host_down = create_new_host
-    down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
+    host_down = Factory(:host)
+    down_role = Factory(:role, :stage => @stage, :name => 'foo', :host => host_down)
     get :latest, :project_id => @project.id, :stage_id => @stage.id, :format => "xml"
     assert_response 404
   end

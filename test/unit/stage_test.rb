@@ -48,15 +48,15 @@ class StageTest < ActiveSupport::TestCase
   end
 
   test "deployment_possible_roles" do
-    project = create_new_project(:template => 'rails')
-    stage = create_new_stage(:project => project)
+    project = Factory(:project, :template => 'rails')
+    stage = Factory(:stage, :project => project)
     assert stage.roles.blank?
     
     # no roles, no deployment
     assert !stage.deployment_possible?
     assert_not_nil stage.deployment_problems[:roles]
     
-    role = create_new_role(:stage => stage)
+    role = Factory(:role, :stage => stage)
     stage = Stage.find(stage.id) # stage.reload would not clear attr_accessor
     
     assert stage.deployment_possible?
@@ -64,9 +64,9 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "deployment_possible_vars" do
-    project = create_new_project(:template => 'rails')
-    stage = create_new_stage(:project => project)
-    role = create_new_role(:stage => stage)
+    project = Factory(:project, :template => 'rails')
+    stage = Factory(:stage, :project => project)
+    role = Factory(:role, :stage => stage)
 
     assert_not_nil stage.effective_configuration(:repository)
     assert_not_nil stage.effective_configuration(:application)
@@ -113,7 +113,7 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "deployment_problems_can_be_called_with_explicit_check_with_deployment_possible" do
-    stage = create_new_stage
+    stage = Factory(:stage)
     
     assert_nothing_raised{
       stage.deployment_problems[:application]
@@ -122,7 +122,7 @@ class StageTest < ActiveSupport::TestCase
   
   test "configs_that_need_prompt" do
     ProjectConfiguration.delete_all
-    @stage = create_new_stage(:project => @project, :name => 'Production')
+    @stage = Factory(:stage, :project => @project, :name => 'Production')
     @stage.reload
     
     # create two config entries, one that need a prompt
@@ -134,7 +134,7 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "alert_emails_format" do
-    stage = create_new_stage
+    stage = Factory(:stage)
     assert_nil stage.alert_emails
     
     stage.alert_emails = "michael@jackson.com"    
@@ -155,10 +155,10 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "recent_deployments" do
-    stage = create_new_stage
-    role = create_new_role(:stage => stage)
+    stage = Factory(:stage)
+    role = Factory(:role, :stage => stage)
     5.times do 
-      deployment = create_new_deployment(:stage => stage)
+      deployment = Factory(:deployment, :stage => stage)
     end
     
     assert_equal 5, stage.deployments.count
@@ -167,17 +167,17 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "webistrano_stage_name" do
-    stage = create_new_stage(:name => '&my_ Pro ject')
+    stage = Factory(:stage, :name => '&my_ Pro ject')
     assert_equal '_my__pro_ject', stage.webistrano_stage_name
   end
   
   test "handle_corrupt_recipes" do
     Open4.expects(:popen4)
     
-    stage = create_new_stage
+    stage = Factory(:stage)
     
     # create a recipe with invalid code
-    recipe = create_new_recipe(:body => <<-'EOS'
+    recipe = Factory(:recipe, :body => <<-'EOS'
       namescape do
         task :foo do
           run 'ls'
@@ -193,7 +193,7 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "locking_methods" do
-    stage = create_new_stage
+    stage = Factory(:stage)
     assert !stage.locked?
     
     stage.lock
@@ -206,8 +206,8 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "lock_info" do
-    stage = create_stage_with_role
-    deployment = create_new_deployment(:stage => stage)
+    stage = Factory(:role, :name => 'app').stage
+    deployment = Factory(:deployment, :stage => stage)
     stage.lock
     stage.lock_with(deployment)
     
@@ -219,8 +219,8 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "lock_with_can_not_be_called_without_being_locked" do
-    stage = create_stage_with_role
-    deployment = create_new_deployment(:stage => stage)
+    stage = Factory(:role, :name => 'app').stage
+    deployment = Factory(:deployment, :stage => stage)
     assert !stage.locked?
     
     assert_raise(ArgumentError) do
@@ -229,10 +229,10 @@ class StageTest < ActiveSupport::TestCase
   end
   
   test "locked_deployment_belongs_to_stage" do
-    stage_1 = create_stage_with_role
-    deployment_1 = create_new_deployment(:stage => stage_1)
-    stage_2 = create_stage_with_role
-    deployment_2 = create_new_deployment(:stage => stage_2)
+    stage_1 = Factory(:role, :name => 'app').stage
+    deployment_1 = Factory(:deployment, :stage => stage_1)
+    stage_2 = Factory(:role, :name => 'app').stage
+    deployment_2 = Factory(:deployment, :stage => stage_2)
     
     stage_1.lock
     assert_raise(ArgumentError) do

@@ -7,13 +7,13 @@ class UserTest < ActiveSupport::TestCase
 
   test "should_create_user" do
     assert_difference 'User.count' do
-      user = create_user
+      user = Factory(:user)
       assert !user.new_record?, "#{user.errors.full_messages.to_sentence}"
     end
   end
 
   test "admin" do
-    user = create_new_user
+    user = Factory(:user)
     assert !user.admin?
 
     user.admin = 1
@@ -29,11 +29,11 @@ class UserTest < ActiveSupport::TestCase
   test "revert_admin_status_only_if_other_admins_left" do
     User.delete_all
 
-    admin = create_new_user
+    admin = Factory(:user)
     admin.make_admin!
     assert admin.admin?
 
-    user = create_new_user
+    user = Factory(:user)
     assert !user.admin?
 
     # check that the admin status of admin cannot be taken
@@ -43,11 +43,11 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "recent_deployments" do
-    user = create_new_user
-    stage = create_new_stage
-    role = create_new_role(:stage => stage)
+    user = Factory(:user)
+    stage = Factory(:stage)
+    role = Factory(:role, :stage => stage)
     5.times do
-      deployment = create_new_deployment(:stage => stage, :user => user)
+      deployment = Factory(:deployment, :stage => stage, :user => user)
     end
 
     assert_equal 5, user.deployments.count
@@ -56,7 +56,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "disable" do
-    user = create_new_user
+    user = Factory(:user)
     assert !user.disabled?
 
     user.disable!
@@ -69,7 +69,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "disable_resets_remember_me" do
-    user = create_new_user
+    user = Factory(:user)
     user.remember_me!
 
     assert_equal false, user.remember_expired?
@@ -85,7 +85,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal [], User.enabled
     assert_equal [], User.disabled
 
-    user = create_new_user
+    user = Factory(:user)
 
     assert_equal [user], User.enabled
     assert_equal [], User.disabled
@@ -96,8 +96,4 @@ class UserTest < ActiveSupport::TestCase
     assert_equal [user], User.disabled
   end
 
-  protected
-    def create_user(options = {})
-      User.create({ :login => 'quire', :email => 'quire@example.com', :password => 'quire!', :password_confirmation => 'quire!' }.merge(options))
-    end
 end

@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class RecipesControllerTest < ActionController::TestCase
 
   def setup
-    @recipe = create_new_recipe
+    @recipe = Factory(:recipe)
   end
 
   test "should_get_index" do
