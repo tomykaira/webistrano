@@ -105,7 +105,7 @@ class DeploymentsControllerTest < ActionController::TestCase
     down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
     post :create, :deployment => { :task => 'deploy:default', :description => 'update to newest', :prompt_config => {} }, :project_id => @project.id, :stage_id => @stage.id
     get :latest, :project_id => @project.id, :stage_id => @stage.id
-    assert_response :success
+    assert_response :redirect
     assert_equal "deploy:default", assigns(:deployment).task
   end
 
@@ -115,18 +115,6 @@ class DeploymentsControllerTest < ActionController::TestCase
     down_role = create_new_role(:stage => @stage, :name => 'foo', :host => host_down)
     get :latest, :project_id => @project.id, :stage_id => @stage.id, :format => "xml"
     assert_response 404
-  end
-
-  test "cancel_doenst_respond_to_get" do
-    @deployment.pid = 123
-    @deployment.save!
-    assert @deployment.running?
-    assert @deployment.cancelling_possible?, @deployment.inspect
-    get :cancel, :project_id => @project.id, :stage_id => @stage.id, :id => @deployment.id
-    assert_response :redirect
-    assert_redirected_to "/"
-    @deployment.reload
-    assert @deployment.running?
   end
 
   test "cancel" do

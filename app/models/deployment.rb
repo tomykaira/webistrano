@@ -1,10 +1,24 @@
 class Deployment < ActiveRecord::Base
+
+  DEPLOY_TASKS    = ['deploy', 'deploy:default', 'deploy:migrations']
+  SETUP_TASKS     = ['deploy:setup']
+  STATUS_CANCELED = "canceled"
+  STATUS_FAILED   = "failed"
+  STATUS_SUCCESS  = "success"
+  STATUS_RUNNING  = "running"
+  STATUS_VALUES   = [STATUS_SUCCESS, STATUS_FAILED, STATUS_CANCELED, STATUS_RUNNING]
+
   belongs_to :stage
   belongs_to :user
   has_and_belongs_to_many :roles
 
-  validates_presence_of :task, :stage, :user
-  validates_length_of :task, :maximum => 250
+  validates :task, :stage, :user,
+    :presence => true
+  validates :task,
+    :length => { :maximum => 250 }
+  validates :status,
+    :inclusion => { :in => STATUS_VALUES }
+  validate :guard_readiness_of_stage, :on => :create
 
   serialize :excluded_host_ids
 
@@ -16,18 +30,6 @@ class Deployment < ActiveRecord::Base
   attr_accessor :override_locking
 
   after_create :add_stage_roles
-
-  DEPLOY_TASKS    = ['deploy', 'deploy:default', 'deploy:migrations']
-  SETUP_TASKS     = ['deploy:setup']
-  STATUS_CANCELED = "canceled"
-  STATUS_FAILED   = "failed"
-  STATUS_SUCCESS  = "success"
-  STATUS_RUNNING  = "running"
-  STATUS_VALUES   = [STATUS_SUCCESS, STATUS_FAILED, STATUS_CANCELED, STATUS_RUNNING]
-
-  validates_inclusion_of :status, :in => STATUS_VALUES
-
-  validate :guard_readiness_of_stage, :on => :create
 
   def self.lock_and_fire(&block)
     transaction do
@@ -163,11 +165,13 @@ class Deployment < ActiveRecord::Base
   end
 
   def cancelling_possible?
-    !self.pid.blank? && !completed?
+    self.pid.present? and !completed?
   end
 
   def cancel!
-    raise "Canceling not possible: Either no PID or already completed" unless cancelling_possible?
+    unless cancelling_possible?
+      raise "Canceling not possible: Either no PID or already completed"
+    end
 
     Process.kill("SIGINT", self.pid)
     sleep 2
@@ -182,16 +186,11 @@ class Deployment < ActiveRecord::Base
 
 protected
 
-  def ensure_not_all_hosts_excluded
-    unless self.stage.blank? || self.excluded_host_ids.blank?
-      if deploy_to_roles(self.stage.roles).blank?
-        errors.add('base', "You cannot exclude all hosts.")
-      end
-    end
-  end
-
   def save_completed_status!(status)
-    raise 'cannot complete a second time' if self.completed?
+    if self.completed?
+      raise 'cannot complete a second time'
+    end
+
     transaction do
       stage = Stage.find(self.stage_id, :lock => true)
       stage.unlock
@@ -213,15 +212,26 @@ private
   # his has to done only on creation as later DB logging MUST always work
   def guard_readiness_of_stage
     unless self.stage.blank?
-      errors.add('stage', 'is not ready to deploy') unless self.stage.deployment_possible?
 
-      self.stage.prompt_configurations.each do |conf|
-        errors.add('base', "Please fill out the parameter '#{conf.name}'") unless !prompt_config.blank? && !prompt_config[conf.name.to_sym].blank?
+      unless self.stage.deployment_possible?
+        errors.add('stage', 'is not ready to deploy')
       end
 
-      errors.add('lock', 'The stage is locked') if self.stage.locked? && !self.override_locking
+      self.stage.prompt_configurations.each do |conf|
+        if prompt_config.blank? or prompt_config[conf.name.to_sym].blank?
+          errors.add('base', "Please fill out the parameter '#{conf.name}'")
+        end
+      end
 
-      ensure_not_all_hosts_excluded
+      if self.stage.locked? && !self.override_locking
+        errors.add('lock', 'The stage is locked')
+      end
+
+      if self.stage.present? and self.excluded_host_ids.present? and deploy_to_roles(self.stage.roles).blank?
+        errors.add('base', "You cannot exclude all hosts.")
+      end
+
     end
   end
+
 end
