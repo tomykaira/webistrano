@@ -1,8 +1,10 @@
 class ProjectConfiguration < ConfigurationParameter
   belongs_to :project
 
-  validates_presence_of :project
-  validates_uniqueness_of :name, :scope => :project_id
+  validates :project,
+    :presence => true
+  validates :name, 
+    :uniqueness => { :scope => :project_id }
 
   # default templates for Projects
   def self.templates

@@ -1,17 +1,22 @@
 class Recipe < ActiveRecord::Base
   has_and_belongs_to_many :stages
   
-  validates_uniqueness_of :name
-  validates_presence_of :name, :body
-  validates_length_of :name, :maximum => 250
+  validates :name,
+    :uniqueness => true,
+    :presence   => true,
+    :length     => { :maximum => 250 }
+  validates :body,
+    :presence   => true
+  validate :check_syntax
 
   attr_accessible :name, :body, :description
   
   scope :ordered, order("name ASC")
   
-  version_fu rescue nil # hack to silence migration errors when the original table is not there
+  # hack to silence migration errors when the original table is not there
+  version_fu rescue nil 
   
-  validate :check_syntax
+private
  
   def check_syntax
    return if self.body.blank?
