@@ -24,11 +24,6 @@ module Webistrano
       config.secret_token = WebistranoConfig[:session_secret]
     end
 
-    initializer "webistrano.clean_stylsheet" do
-      stylesheet = "#{Rails.root}/public/stylesheets/application.css"
-      File.delete(stylesheet) if  File.exists?(stylesheet)
-    end
-
   end
 end
 

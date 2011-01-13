@@ -6,6 +6,7 @@ gem 'capistrano',      '2.5.19'
 gem 'open4',           '0.9.3'
 gem 'syntax',          '1.0.0'
 gem 'devise'
+gem 'compass'
 
 group :development do
   gem 'sqlite3-ruby', :require => 'sqlite3'

@@ -44,7 +44,5 @@ Webistrano::Application.routes.draw do
     end
   end
 
-  match '/stylesheets/application.css' => 'stylesheets#application', :as => :stylesheet
-
   # match '/:controller(/:action(/:id))'
 end
