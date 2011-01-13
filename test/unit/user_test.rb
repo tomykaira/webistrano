@@ -51,19 +51,19 @@ class UserTest < ActiveSupport::TestCase
     end
 
     assert_equal 5, user.deployments.count
-    assert_equal 3, user.recent_deployments.size
-    assert_equal 2, user.recent_deployments(2).size
+    assert_equal 3, user.deployments.recent.length
+    assert_equal 2, user.deployments.recent(2).length
   end
 
   test "disable" do
     user = create_new_user
     assert !user.disabled?
 
-    user.disable
+    user.disable!
 
     assert user.disabled?
 
-    user.enable
+    user.enable!
 
     assert !user.disabled?
   end
@@ -74,7 +74,7 @@ class UserTest < ActiveSupport::TestCase
 
     assert_equal false, user.remember_expired?
 
-    user.disable
+    user.disable!
     user.reload
 
     assert user.remember_created_at.blank?
@@ -90,7 +90,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal [user], User.enabled
     assert_equal [], User.disabled
 
-    user.disable
+    user.disable!
 
     assert_equal [], User.enabled
     assert_equal [user], User.disabled

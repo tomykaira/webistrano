@@ -208,7 +208,7 @@ module Factories
     options = {
       :login => random_string,
       :email => "#{random_string}@#{random_string}.com",
-      :admin => 0,
+      :admin => false,
       :password => random_string
     }.update(options)
   

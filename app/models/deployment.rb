@@ -8,6 +8,11 @@ class Deployment < ActiveRecord::Base
   STATUS_RUNNING  = "running"
   STATUS_VALUES   = [STATUS_SUCCESS, STATUS_FAILED, STATUS_CANCELED, STATUS_RUNNING]
 
+  scope :recent, proc { |*args|
+    max = args.first || 3
+    order('deployments.created_at DESC').limit(max)
+  }
+
   belongs_to :stage
   belongs_to :user
   has_and_belongs_to_many :roles

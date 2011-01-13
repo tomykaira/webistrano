@@ -18,7 +18,6 @@ class UsersController < ApplicationController
   # POST /users.xml
   def create
     @user = User.new(params[:user])
-    @user.admin = params[:user][:admin].to_i rescue 0
 
     respond_to do |format|
       if @user.save
@@ -37,7 +36,7 @@ class UsersController < ApplicationController
   # GET /users/1.xml
   def show
     @user = User.find(params[:id])
-    @deployments = @user.recent_deployments
+    @deployments = @user.deployments.recent
 
     respond_to do |format|
       format.html # show.rhtml
@@ -54,14 +53,13 @@ class UsersController < ApplicationController
   # PUT /users/1.xml
   def update
     @user = User.find(params[:id])
-    @user.attributes = params[:user]
 
-    if current_user.admin?
-      @user.admin = params[:user][:admin].to_i rescue 0
+    unless current_user.admin?
+      params[:user].delete(:admin)
     end
 
     respond_to do |format|
-      if @user.save
+      if @user.update_attributes(params[:user])
         flash[:notice] = 'User was successfully updated.'
         format.html { redirect_to user_url(@user) }
         format.xml  { head :ok }
@@ -77,10 +75,10 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
 
-    if @user.admin? && User.admin_count == 1
+    if @user.admin? && User.admins.count == 1
       message = 'Can not disable last admin user.'
     else
-      @user.disable
+      @user.disable!
       message = 'User was successfully disabled.'
     end
 
@@ -93,7 +91,7 @@ class UsersController < ApplicationController
 
   def enable
     @user = User.find(params[:id])
-    @user.enable
+    @user.enable!
     flash[:notice] = "The user was enabled"
 
     respond_to do |format|

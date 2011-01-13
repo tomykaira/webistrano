@@ -3,7 +3,7 @@
     This stage was never deployed. 
   <br/>
 <% else %>
-  <% @stage.recent_deployments.each do |deployment| %>
+  <% @stage.deployments.recent.each do |deployment| %>
     <%= render(:partial => 'deployments/list_item', :locals => {:deployment => deployment}) %>
   <% end %>
 <% end %>

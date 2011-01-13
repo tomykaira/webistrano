@@ -160,8 +160,8 @@ class ProjectTest < ActiveSupport::TestCase
     end
     
     assert_equal 10, project.deployments.count
-    assert_equal 3, project.recent_deployments.size
-    assert_equal 2, project.recent_deployments(2).size
+    assert_equal 3,  project.deployments.recent.length
+    assert_equal 2,  project.deployments.recent(2).length
   end
   
 end

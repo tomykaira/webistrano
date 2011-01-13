@@ -69,14 +69,14 @@ class UsersControllerTest < ActionController::TestCase
     assert !user_2.admin?
 
     login(user_1)
-    put :update, :id => user_2.id, :user => { :admin => '1'}
+    put :update, :id => user_2.id, :user => { :admin => '1' }
 
     user_2.reload
 
     assert !user_2.admin?
   end
 
-  test "admin_status_can_be_set_by_non_admins" do
+  test "admin_status_can_be_set_by_admins" do
     admin = create_new_user
     admin.make_admin!
     user_2 = create_new_user
@@ -85,7 +85,7 @@ class UsersControllerTest < ActionController::TestCase
     assert !user_2.admin?
 
     login(admin)
-    put :update, :id => user_2.id, :user => { :admin => '1'}
+    put :update, :id => user_2.id, :user => { :admin => '1' }
 
     user_2.reload
 
@@ -167,7 +167,7 @@ class UsersControllerTest < ActionController::TestCase
   test "enable" do
     user = admin_login
     other = create_new_user
-    other.disable
+    other.disable!
 
     post :enable, :id => other.id
     assert_response :redirect
@@ -179,7 +179,7 @@ class UsersControllerTest < ActionController::TestCase
   test "enable_only_admin" do
     user = login
     other = create_new_user
-    other.disable
+    other.disable!
 
     post :enable, :id => other.id
     assert_response :redirect
@@ -191,7 +191,7 @@ class UsersControllerTest < ActionController::TestCase
   test "should_logout_if_disabled_after_login" do
     user = login
 
-    user.disable
+    user.disable!
 
     get :index
     assert_response :redirect

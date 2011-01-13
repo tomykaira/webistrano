@@ -162,8 +162,8 @@ class StageTest < ActiveSupport::TestCase
     end
     
     assert_equal 5, stage.deployments.count
-    assert_equal 3, stage.recent_deployments.size
-    assert_equal 2, stage.recent_deployments(2).size
+    assert_equal 3, stage.deployments.recent.length
+    assert_equal 2, stage.deployments.recent(2).length
   end
   
   test "webistrano_stage_name" do

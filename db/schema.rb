@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110112150457) do
+ActiveRecord::Schema.define(:version => 20110113085919) do
 
   create_table "configuration_parameters", :force => true do |t|
     t.string   "name"
@@ -111,9 +111,9 @@ ActiveRecord::Schema.define(:version => 20110112150457) do
 
   create_table "users", :force => true do |t|
     t.string   "login"
-    t.integer  "admin",                               :default => 0
+    t.boolean  "admin",                               :default => false
     t.string   "time_zone",                           :default => "UTC"
-    t.datetime "disabled"
+    t.datetime "disabled_at"
     t.string   "email",                               :default => "",    :null => false
     t.string   "encrypted_password",   :limit => 128, :default => "",    :null => false
     t.string   "password_salt",                       :default => "",    :null => false
@@ -129,7 +129,7 @@ ActiveRecord::Schema.define(:version => 20110112150457) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["disabled"], :name => "index_users_on_disabled"
+  add_index "users", ["disabled_at"], :name => "index_users_on_disabled_at"
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
