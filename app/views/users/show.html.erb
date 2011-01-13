@@ -60,6 +60,6 @@
 <% end %>
 
 <% content_for(:page_title) do %>
-  <% @page_title = "User #{h(@user.login)}" %>
+  <% @page_title = "User #{@user.login}" %>
   <h2>User <%= user_info(@user)%></h2>
 <% end %>

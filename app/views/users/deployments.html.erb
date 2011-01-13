@@ -16,6 +16,6 @@
 <% end %>
 
 <% content_for(:page_title) do %>
-  <% @page_title = "Deployments of user #{h(@user.login)}" %>
-  <h2>Deployments of user <%= link_to  h(@user.login), user_path(@user) %></h2>
+  <% @page_title = "Deployments of user #{@user.login}" %>
+  <h2>Deployments of user <%= link_to  @user.login, user_path(@user) %></h2>
 <% end %>

@@ -9,8 +9,8 @@
     </tr>
     <% for stage in @stages %>
       <tr class="<%= cycle :even, :odd, :name => 'stages' %>">
-        <td valign="top"><%= link_to h(stage.project.name), project_path(stage.project) %></td>
-        <td valign="top"><%= link_to h(stage.name), project_stage_path(stage.project, stage) %></td>
+        <td valign="top"><%= link_to stage.project.name, project_path(stage.project) %></td>
+        <td valign="top"><%= link_to stage.name, project_stage_path(stage.project, stage) %></td>
         <td valign="top">
           <% for role in stage.roles.find(:all, :conditions => ['host_id = ?', @host.id]) %>
             <%=h role.name %>

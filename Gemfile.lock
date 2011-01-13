@@ -107,6 +107,7 @@ DEPENDENCIES
   compass
   devise
   factory_girl_rails
+  haml
   mocha
   mysql
   open4 (= 0.9.3)

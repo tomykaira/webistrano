@@ -14,7 +14,7 @@
     </tr>
   <% for role in @stage.roles %>
     <tr class="<%= cycle :even, :odd, :name => 'roles' %>">
-      <td><%= link_to h(role.host.name), host_path(role.host) %></td>
+      <td><%= link_to role.host.name, host_path(role.host) %></td>
       <td><%=h role.name %></td>
       <td><%=h role.ssh_port || 'default' %></td>
       <td><%=h role.role_attribute_hash.inspect unless role.role_attribute_hash.blank?  %></td>

@@ -45,6 +45,6 @@
 <% end %>
 
 <% content_for(:page_title) do %>
-  <% @page_title = "Host #{h(@host.name)}" %>
+  <% @page_title = "Host #{@host.name}" %>
   <h2>Host <%=h @host.name %></h2>
 <% end %>

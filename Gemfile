@@ -8,6 +8,7 @@ gem 'syntax',          '1.0.0'
 gem 'version_fu'
 gem 'devise'
 gem 'compass'
+gem 'haml'
 
 group :development do
   gem 'sqlite3-ruby', :require => 'sqlite3'

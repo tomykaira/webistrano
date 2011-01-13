@@ -11,7 +11,7 @@
   </tr>
   <% for host in @hosts %>
     <tr class="<%= cycle :even, :odd  %>">
-      <td><%= link_to h(host.name), host_path(host) %></td>
+      <td><%= link_to host.name, host_path(host) %></td>
       <td><%=h host.stages.count %></td>
       <td><%=h host.roles.count %></td>
       <% if current_user.admin? %>

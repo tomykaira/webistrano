@@ -16,7 +16,7 @@
     </tr>
     <% for recipe in @recipes %>
       <tr class="<%= cycle :even, :odd, :name => 'recipes'  %>">
-        <td><%= link_to h(recipe.name), recipe_path(recipe) %></td>
+        <td><%= link_to recipe.name, recipe_path(recipe) %></td>
         <td><%=h recipe.description %></td>
         <td><%=h recipe.stages.count %></td>
         <td><%=h recipe.created_at.to_s(:date_with_day) rescue nil %></td>

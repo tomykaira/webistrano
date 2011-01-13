@@ -27,7 +27,7 @@
 		</p>
 		<p>
 		  <b>Project:</b>
-		  <%= link_to h(@stage.project.name), project_url(current_project) %>
+		  <%= link_to @stage.project.name, project_url(current_project) %>
 		</p>
 		<p>
 		  <b>Alert on deploy:</b>
@@ -115,7 +115,7 @@
 <% end %>
 
 <% content_for(:page_title) do %>
-  <% @page_title = "Project #{h(current_project.name)} - Stage #{h(@stage.name)}"%>
-  <h2>Stage <%= link_to h(@stage.name), project_stage_path(current_project, @stage) %></h2>
+  <% @page_title = "Project #{current_project.name} - Stage #{@stage.name}"%>
+  <h2>Stage <%= link_to @stage.name, project_stage_path(current_project, @stage) %></h2>
 <% end %>
 

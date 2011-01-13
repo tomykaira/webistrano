@@ -103,7 +103,7 @@
                                 :id => "host_#{host.id}_off", 
                                 :style => if_enabled_host?(host,'display:none;') + 'cursor:pointer;')%>
                 </td>
-                <td width="99%" title="<%=h h(host.name) %>" class="toggle_host" id="toggle_host_<%=h host.id %>">
+                <td width="99%" title="<%=h host.name %>" class="toggle_host" id="toggle_host_<%=h host.id %>">
                   <div style="overflow: hidden; padding-left: 5px; width: 180px; white-space: nowrap; cursor: pointer;"><%=h host.name %></div>
                 </td>
               </tr>
@@ -129,6 +129,6 @@
 <% end %>
 
 <% content_for(:page_title) do %>
-  <% @page_title = "Deploy stage #{h(current_stage.name)} of project #{h(current_project.name)}" %>
+  <% @page_title = "Deploy stage #{current_stage.name} of project #{current_project.name}" %>
   <h2>Deployment</h2>
 <% end %>
