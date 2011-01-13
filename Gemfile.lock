@@ -95,6 +95,7 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
+    version_fu (1.0.1)
     warden (1.0.3)
       rack (>= 1.0.0)
 
@@ -113,3 +114,4 @@ DEPENDENCIES
   sqlite3-ruby
   syntax (= 1.0.0)
   test-unit (= 2.0.9)
+  version_fu
