@@ -1,4 +1,4 @@
-<div id="hosts_open_content" style="<%= show_if_opened(status) %>">
+<div class="open" style="<%= show_if_opened(status) %>">
   <% if Host.count > 0 %>
     <% for host in Host.find(:all, :order => "name ASC") %>
       <a href="<%= host_path(host) %>" class="menu_link <%= active_link_class(host) %>" title="<%= host.name %>">
@@ -16,10 +16,9 @@
     </a>
   <% end %>
 </div>
-<div id="hosts_closed_content" style="<%= show_if_closed(status) %>">
-  <a href="javascript:open_menu_box('hosts')" class="menu_link  menu_link_create">
-    <div class="menu_link_title">
-      <%= pluralize(Host.count, 'host')%>
-    </div>
-  </a>
-</div>  
+
+<div class="closed" style="<%= show_if_closed(status) %>">
+  <div class="menu_link_title">
+    <%= pluralize(Host.count, 'host')%>
+  </div>
+</div>

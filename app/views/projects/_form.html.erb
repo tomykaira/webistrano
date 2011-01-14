@@ -12,38 +12,13 @@
   <%= text_area 'project', 'description', :style =>'width:330px; height: 100px' %>
 </p>
 
-
-<% content_for(:page_scripts) do %>
- <script type="text/javascript">
- 
-    Event.observe(window, 'load', function(){
-      Event.observe('project_template', 'change', show_template_info);
-      
-      // show info for already chosen template
-      show_template_info();
-    });
- 
-   function show_template_info(){
-     hide_all_infos();
-     var info_to_show = $F('project_template') + '_desc';
-     $(info_to_show).show();
-   }
-   
-   function hide_all_infos(){
-     <% for template in @template_infos %>
-       $('<%= template.first %>_desc').hide();
-     <% end %>
-   }
-
- </script>
-<% end %>
 <% content_for(:action_box) do %>
 <div class="small_box">
   <div class="small_box_top"></div>
   <div class="small_box_middle" style="min-height: 230px; *height: 230px;">
      <h3>Project Type:</h3>
        <% for template in @template_infos %>
-         <div id="<%= template.first %>_desc" style="display:none;">
+         <div id="<%= template.first %>_desc" class="template_info" style="display:none;">
              <b><%= template.first.to_s.titleize %>:</b><br />
              <%= template.last %>
          </div>

@@ -14,18 +14,3 @@
   %p
     Override locking and deploy anyhow?
     %input{:type=>"checkbox", :id=>"override_locking_trigger", :value=>"1"}
-
-= content_for(:page_scripts) do
-  %script{ :type=>"text/javascript" }
-    Event.observe(window, 'load', function(){
-      var trigger = $('override_locking_trigger');
-      var target = $('deployment_override_locking');
-
-      Event.observe(trigger, 'change', function(){
-        if(trigger.checked){
-          target.value = 1;
-        }else{
-          target.value = 0;
-        }
-      })
-    });

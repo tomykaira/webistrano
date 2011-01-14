@@ -42,38 +42,3 @@
   <b>No symlink</b> (tick this if you do not want to update the <i>current</i> symlink)<br />
   <%= check_box 'role', 'no_symlink', :style =>'' %>
 </p>
-
-<% content_for(:page_scripts) do %>
-  <script type="text/javascript">
-
-    Event.observe(window, 'load', function(){
-      role_name();
-      Event.observe('role_name', 'change', role_name);
-      Event.observe('role_custom_name', 'change', role_custom_name);
-    });
-
-
-    function role_name(){
-      var name = $('role_name');
-      var custom_name = $('role_custom_name');
-
-      if(name.value != ''){
-        custom_name.disable();
-      } else {
-        custom_name.enable();
-      }
-    }
-
-    function role_custom_name(){
-      var name = $('role_name');
-      var custom_name = $('role_custom_name');
-
-      if(custom_name.value != ''){
-        name.disable();
-      } else {
-        name.enable();
-      }
-    }
-
-  </script>
-<% end %>

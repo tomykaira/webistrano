@@ -80,7 +80,13 @@ class StagesController < ApplicationController
     @stage = current_project.stages.find(params[:id])
 
     respond_with(@stage) do |format|
-      format.text { render :layout => false, :content_type => 'text/plain' }
+      format.text do
+        send_file_headers! \
+               :disposition  => "attachment",
+               :filename     => 'Capfile.rb'
+        render :layout       => false,
+               :content_type => 'text/plain'
+      end
     end
   end
 

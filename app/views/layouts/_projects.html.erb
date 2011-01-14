@@ -1,4 +1,4 @@
-<div id="projects_open_content" style="<%= show_if_opened(status) %>">
+<div class="open" style="<%= show_if_opened(status) %>">
   <% if Project.count > 0 %>
     <% for project in Project.find(:all, :order => "name ASC") %>
       <a href="<%= project_path(project) %>" class="menu_link <%= active_link_class(project) %>" title="<%= project.name %>">
@@ -30,10 +30,8 @@
    <a href="<%= new_project_path %>" class="menu_link  menu_link_create">New project</a>
   <% end %>
 </div>
-<div id="projects_closed_content" style="<%= show_if_closed(status) %>">
-  <a href="javascript:open_menu_box('projects')" class="menu_link  menu_link_create">
-    <div class="menu_link_title">
-      <%= pluralize(Project.count, 'project')%>
-    </div>
-  </a>
+<div class="closed" style="<%= show_if_closed(status) %>">
+  <div class="menu_link_title">
+    <%= pluralize(Project.count, 'project')%>
+  </div>
 </div>
