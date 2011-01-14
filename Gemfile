@@ -2,9 +2,9 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
 
-gem 'capistrano',      '2.5.19'
-gem 'open4',           '0.9.3'
-gem 'syntax',          '1.0.0'
+gem 'capistrano', '2.5.19'
+gem 'open4',      '0.9.3'
+gem 'syntax',     '1.0.0'
 gem 'version_fu'
 gem 'devise'
 gem 'compass'
