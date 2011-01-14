@@ -4,7 +4,7 @@ require 'action_view'
 module FightTheMelons #:nodoc:
   module Helpers #:nodoc:
     
-  	# Some of the most used variables so you can setup them per application or
+    # Some of the most used variables so you can setup them per application or
     # per controller instead of everytime you use one of the helpers.
     module FormMultipleSelectHelperConfiguration      
       # Class used in the ul tag that wraps all the checkboxes.
@@ -224,9 +224,9 @@ module FightTheMelons #:nodoc:
           ) do
             children = node.send(child_method)
             branch = if not (depth == 0 || children.size == 0)
-	            "\n" + av_content_tag(
-	              FormMultipleSelectHelperConfiguration.list_tags[0],
-	              checkboxes_from_tree_for_multiple_select(
+              "\n" + av_content_tag(
+                FormMultipleSelectHelperConfiguration.list_tags[0],
+                checkboxes_from_tree_for_multiple_select(
                     name, children, value_method, text_method, selected_items,
                     child_options
                   )

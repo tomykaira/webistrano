@@ -1,9 +1,9 @@
 <fieldset class="fieldset">
   <legend>Complete Deployment history</legend>
-  
+
 <% if @stage.deployments.empty? %>
   <br/>
-    This stage was never deployed. 
+    This stage was never deployed.
   <br/>
 <% else %>
   <% @stage.deployments.each do |deployment| %>
@@ -16,19 +16,19 @@
 
 <br />
 
-<%= link_to "Back", project_stage_path(current_project, current_stage), :class => 'arrow_link' %>
+<%= link_to "Back", [current_project, current_stage], :class => 'arrow_link' %>
 
 <% content_for(:breadcrumb) do %>
   <%= breadcrumb_box do %>
-    <%= link_to "Projects", projects_path %> &gt; 
-    Project <%= link_to current_project.name, project_path(current_project) %> &gt; 
-    Stage <%= link_to current_stage.name, project_stage_path(current_project, current_stage) %> &gt; 
+    <%= link_to "Projects", projects_path %> &gt;
+    Project <%= link_to current_project.name, current_project %> &gt;
+    Stage <%= link_to current_stage.name, [current_project, current_stage] %> &gt;
     Deployments
   <% end %>
 <% end %>
 
 <% content_for(:page_title) do %>
   <% @page_title = "Deployment history: Project #{current_project.name} - Stage #{current_stage.name} " %>
-  <h2>Deployment history of <%= link_to current_stage.name, project_stage_path(current_project, current_stage) %></h2>
+  <h2>Deployment history of <%= link_to current_stage.name, [current_project, current_stage] %></h2>
 <% end %>
 

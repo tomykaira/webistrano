@@ -12,7 +12,7 @@
     <% for recipe in @stage.recipes.ordered %>
       <tr class="<%= cycle :even, :odd, :name => 'recipes'  %>">
         <td><%= link_to recipe.name, recipe_path(recipe) %></td>
-        <td><%=h recipe.description %></td>
+        <td><%= recipe.description %></td>
       </tr>
     <% end %>
   </table>

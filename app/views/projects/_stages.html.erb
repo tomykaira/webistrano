@@ -12,8 +12,8 @@
   <% for stage in @project.stages %>
     <tr class="<%= cycle :even, :odd, :name => 'stages' %>">
       <td><%= link_to stage.name, project_stage_path(@project, stage) %></td>
-      <td><%=h stage.hosts.count  %></td>
-      <td><%=h stage.deployments.count  %></td>
+      <td><%= stage.hosts.count  %></td>
+      <td><%= stage.deployments.count  %></td>
       <td><%= link_to 'Edit', edit_project_stage_path(@project, stage) %></td>
       <td><%= link_to 'Delete', project_stage_path(@project, stage), :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

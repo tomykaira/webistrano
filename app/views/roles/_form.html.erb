@@ -4,18 +4,18 @@
     <tr>
       <td colspan="2">
         <b>Role</b><br />
-	  </td>
+    </td>
       <td >
         <b>Custom Role</b><br />
-	  </td>
-	</tr>
-	<tr>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>
         <%= select('role', 'name', Role::DEFAULT_NAMES, { :include_blank => true }, {:style => 'width:250px;'}) %>
       </td>
       <td  style="padding:0px;">&nbsp;<b>or</b>&nbsp;</td>
       <td valign="bottom">
-		<%= text_field 'role', 'custom_name', :style =>'width:250px;' %>
+    <%= text_field 'role', 'custom_name', :style =>'width:250px;' %>
       </td>
     </tr>
   </table><br>

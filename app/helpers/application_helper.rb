@@ -43,7 +43,7 @@ module ApplicationHelper
   end
 
   def current_stage_project_description
-    raw "stage: #{link_to current_stage.name, project_stage_path(current_project, current_stage)} (of project #{link_to current_project.name, project_path(current_project)})"
+    raw "stage: #{link_to current_stage.name, [current_project, current_stage]} (of project #{link_to current_project.name, current_project})"
   end
 
   # returns the open/closed status of a menu
@@ -88,7 +88,7 @@ module ApplicationHelper
   end
 
   def user_info(user)
-    link_to user.login, user_path(user)
+    link_to user.login, user
   end
 
   def show_if_closed(status)

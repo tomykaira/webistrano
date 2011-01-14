@@ -3,7 +3,8 @@
 - if stage.locking_deployment
   %p
     This stage is being deployed by
-    = link_to stage.locking_deployment.user.login, stage.locking_deployment.user
+    = link_to stage.locking_deployment.user.login,
+      stage.locking_deployment.user
     who executed
     = link_to stage.locking_deployment.task,
       [current_project, current_stage, stage.locking_deployment]

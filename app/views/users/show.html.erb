@@ -6,40 +6,35 @@
 
 
 <div class="box">
-  <div class="box_top"></div>
-  <div class="box_middle">
-		<% if @user.admin? %>
-		  <p>
-		    <b>Admin User</b>
-		  </p>
-		<% end %>
-		<p>
-			  <b>Login:</b>
-			  <%=h @user.login %>
-			</p>
+  <dl>
+    <% if @user.admin? %>
+    <dt>User role:</dt>
+    <dd>Admin User</dd>
+    <% end %>
 
-			<p>
-			  <b>Email:</b>
-			  <%=h @user.email %>
-			</p>
-      
-			<p>
-			  <b>Timezone:</b> <%=h @user.time_zone.to_s %>
-			</p>
-			<p>
-			  <b>#Deployments:</b> <%=h @user.deployments.count %>
-			</p>
-			<br/>
-			<% if current_user.admin? || current_user == @user %>
-			  <%= link_to 'Edit & change password', edit_user_path(@user), :class => 'arrow_link' %> | 
-			  <% if @user.disabled? %>
-			    <%= link_to 'Enable', enable_user_path(@user), :confirm => 'Are you sure?', :method => :post, :class => 'arrow_link'  %>
-			  <% else %>
-			    <%= link_to 'Disable', user_path(@user), :confirm => 'Are you sure? Disabled users can no longer login.', :method => :delete, :class => 'arrow_link'  %>
-			  <% end %>
-			<% end %>
-  </div>
-  <div class="box_bottom"></div>
+    <dt>Login:</dt>
+    <dd><%= @user.login %></dd>
+
+    <dt>Email:</dt>
+    <dd><%= @user.email %></dd>
+
+    <dt>Timezone:</dt>
+    <dd><%= @user.time_zone.to_s %></dd>
+
+    <dt>#Deployments:</dt>
+    <dd><%= @user.deployments.count %></dd>
+  </dl>
+  <p>
+  <% if current_user.admin? or current_user == @user %>
+    <%= link_to 'Edit & change password', [:edit, @user], :class => 'arrow_link' %> |
+
+    <% if @user.disabled? %>
+      <%= link_to 'Enable', enable_user_path(@user), :confirm => 'Are you sure?', :method => :post, :class => 'arrow_link'  %>
+    <% else %>
+      <%= link_to 'Disable', user_path(@user), :confirm => 'Are you sure? Disabled users can no longer login.', :method => :delete, :class => 'arrow_link'  %>
+    <% end %>
+  <% end %>
+  </p>
 </div>
 
 <div class="clear"></div>
@@ -54,8 +49,8 @@
 <% content_for(:breadcrumb) do %>
   <%= breadcrumb_box do %>
     <%= link_to "Manage users", users_path, :style => "float:right", :class => "arrow_link" %>
-    <%= link_to "Users", users_path %> &gt; 
-    User <%= link_to @user.login, user_path(@user) %> 
+    <%= link_to "Users", users_path %> &gt;
+    User <%= link_to @user.login, user_path(@user) %>
   <% end %>
 <% end %>
 

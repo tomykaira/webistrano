@@ -2,7 +2,7 @@ class Node < ActiveRecord::Base #:nodoc:
   acts_as_tree
   
   def alt_children
-  	self.children
+    self.children
   end
   
   def selected_none
