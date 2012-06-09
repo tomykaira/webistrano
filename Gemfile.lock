@@ -56,6 +56,8 @@ GEM
     devise-encryptable (0.1.1)
       devise (>= 2.1.0.rc)
     erubis (2.7.0)
+    exception_notification (2.6.1)
+      actionmailer (>= 3.0.4)
     factory_girl (3.3.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (3.3.0)
@@ -142,6 +144,7 @@ DEPENDENCIES
   compass
   devise
   devise-encryptable
+  exception_notification
   factory_girl_rails
   haml
   mocha

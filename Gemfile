@@ -1,7 +1,9 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.5'
+
 gem 'prototype-rails'
+gem 'exception_notification'
 
 gem 'capistrano'#, '2.5.19'
 gem 'open4',      '0.9.3'
