@@ -8,3 +8,4 @@ config/webistrano_config.rb
 .rake_tasks~
 public/stylesheets/*.css
 vendor/bundler
+.sass-cache/

@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.5'
 
+gem 'jquery-rails'
 gem 'prototype-rails'
 gem 'exception_notification'
 
@@ -11,7 +12,6 @@ gem 'syntax',     '1.0.0'
 gem 'version_fu', :github => 'jmckible/version_fu'
 gem 'devise'
 gem 'devise-encryptable'
-gem 'compass'
 gem 'haml'
 
 group :development do
@@ -27,4 +27,10 @@ end
 
 group :production do
   gem 'mysql'
+end
+
+group :assets do
+  gem 'compass'
+  gem 'compass-rails'
+  gem 'sass-rails'
 end

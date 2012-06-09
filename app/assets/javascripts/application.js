@@ -1,6 +1,22 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// the compiled file.
+//
+// WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
+// GO AFTER THE REQUIRES BELOW.
+//
+//= require jquery
+//= require jquery_ujs
+//= require_self
+//= require_tree .
 
 $(function(){
-  
+
   // ============
   // = Menu Box =
   // ============
@@ -9,30 +25,30 @@ $(function(){
     ,   open
     ,   closed
     ;
-    
+
     menu_box = $(this).closest('.menu_box');
     open     = $('.menu_box_body .open,   .menu_box_arrow .open',   menu_box);
     closed   = $('.menu_box_body .closed, .menu_box_arrow .closed', menu_box);
-    
+
     open.hide();
     closed.show();
   });
-  
+
   $('.menu_box .menu_box_arrow .closed, .menu_box .menu_box_body .closed').click(function(){
     var menu_box
     ,   open
     ,   closed
     ;
-    
+
     menu_box = $(this).closest('.menu_box');
     open     = $('.menu_box_body .open,   .menu_box_arrow .open',   menu_box);
     closed   = $('.menu_box_body .closed, .menu_box_arrow .closed', menu_box);
-    
+
     open.show();
     closed.hide();
   });
-  
-  
+
+
   // ====================================
   // = Override deployment lock trigger =
   // ====================================
@@ -43,8 +59,8 @@ $(function(){
       $('deployment_override_locking').val(0);
     }
   });
-  
-  
+
+
   // ====================
   // = Effective Config =
   // ====================
@@ -53,14 +69,14 @@ $(function(){
     $('#h_e_c, #effective_config').show();
     $('#s_e_c').hide();
   });
-  
+
   $('#h_e_c').click(function(e){
     e.preventDefault();
     $('#h_e_c, #effective_config').hide();
     $('#s_e_c').show();
   });
-  
-  
+
+
   // ====================================
   // = En/disable role specifier inputs =
   // ====================================
@@ -68,50 +84,50 @@ $(function(){
     var name
     ,   custom_name
     ;
-    
+
     name        = $('#role_name');
     custom_name = $('#role_custom_name');
-    
+
     if(name.val() == ''){
       custom_name.removeAttr("disabled");
     } else {
       custom_name.attr("disabled","disabled");
     }
   });
-  
+
   $('#role_custom_name').change(function(){
     var name
     ,   custom_name
     ;
-    
+
     name        = $('#role_name');
     custom_name = $('#role_custom_name');
-    
+
     if(custom_name.val() == ''){
       name.removeAttr("disabled");
     } else {
       name.attr("disabled","disabled");
     }
   });
-  
+
   $('#role_name').change();
-  
-  
+
+
   // =========================
   // = Project Template Info =
   // =========================
   $('#project_template').change(function(){
     var selection
     ;
-    
+
     selection = $('#project_template').val();
-    
+
     $('.template_info').hide();
     $('#'+selection+'_desc').show();
   });
-  
+
   $('#project_template').change();
- 
+
 });
 
 
@@ -121,8 +137,8 @@ function open_menu(dom_id){
   // arrow images
   $(dom_id + "_arrow_right").hide();
   $(dom_id + "_arrow_down").show();
-  
-  // stages 
+
+  // stages
   $(dom_id + "_stages").show();
 }
 
@@ -130,7 +146,7 @@ function close_menu(dom_id){
   // arrow images
   $(dom_id + "_arrow_right").show();
   $(dom_id + "_arrow_down").hide();
-  
-  // stages 
+
+  // stages
   $(dom_id + "_stages").hide();
 }
