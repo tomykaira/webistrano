@@ -1,9 +1,9 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class ProjectsControllerTest < ActionController::TestCase
 
   def setup
-    @project = Factory(:project)
+    @project = FactoryGirl.create(:project)
   end
 
   test "should_get_index" do

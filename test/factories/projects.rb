@@ -1,10 +1,7 @@
-
-Factory.sequence :project_name do |n|
-  "Project %04d" % n
-end
-  
-Factory.define :project do |f|
-  f.name        {  Factory.next :project_name }
-  f.description "A description for this project"
-  f.template    'rails'
+FactoryGirl.define do
+  factory :project do
+    sequence(:name) { |n| "Project %04d" % n }
+    description "A description for this project"
+    template    'rails'
+  end
 end

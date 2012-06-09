@@ -24,7 +24,7 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   def login(user=nil)
-    user ||= Factory(:user)
+    user ||= FactoryGirl.create(:user)
     sign_in :user, user
     return user
   end

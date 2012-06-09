@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class NotificationTest < ActionMailer::TestCase
   tests Notification
@@ -8,10 +8,10 @@ class NotificationTest < ActionMailer::TestCase
   test "sender_address" do
     Notification.webistrano_sender_address = "FooBar"
     
-    stage = Factory(:stage)
-    role = Factory(:role, :stage => stage, :name => 'app')
+    stage = FactoryGirl.create(:stage)
+    role = FactoryGirl.create(:role, :stage => stage, :name => 'app')
     assert stage.deployment_possible?, stage.deployment_problems.inspect
-    deployment = Factory(:deployment, :stage => stage, :task => 'deploy')
+    deployment = FactoryGirl.create(:deployment, :stage => stage, :task => 'deploy')
     
     email = Notification.deployment(deployment, 'foo@bar.com').deliver
     assert !ActionMailer::Base.deliveries.empty?

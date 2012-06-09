@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../non_transactional_test_helper'
+require 'non_transactional_test_helper'
 require 'deployments_controller'
 
 # Re-raise errors caught by the controller.
@@ -11,10 +11,10 @@ class DeploymentsControllerTest < Test::Unit::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     
-    @project = Factory(:project, :name => 'Project X')
-    @stage = Factory(:stage, :name => 'Prod', :project => @project)
-    @role = Factory(:role, :name => 'web', :stage => @stage)
-    @deployment = Factory(:deployment, :task => 'deploy:setup', :stage => @stage)
+    @project = FactoryGirl.create(:project, :name => 'Project X')
+    @stage = FactoryGirl.create(:stage, :name => 'Prod', :project => @project)
+    @role = FactoryGirl.create(:role, :name => 'web', :stage => @stage)
+    @deployment = FactoryGirl.create(:deployment, :task => 'deploy:setup', :stage => @stage)
     
     @user = login
   end

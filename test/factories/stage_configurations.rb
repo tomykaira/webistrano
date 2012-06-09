@@ -1,15 +1,8 @@
-
-Factory.sequence :stage_configuration_name do |n|
-  "Stage Configuration %04d" % n
-end
-
-Factory.sequence :stage_configuration_value do |n|
-  "Value %04d" % n
-end
-  
-Factory.define :stage_configuration do |f|
-  f.stage { |a| a.association(:stage) }
-  f.name  { Factory.next :stage_configuration_name  }
-  f.value { Factory.next :stage_configuration_value }
-  f.prompt_on_deploy 0
+FactoryGirl.define do
+  factory :stage_configuration do
+    stage { |a| a.association(:stage) }
+    sequence(:name)  { |n| "Stage Configuration %04d" % n }
+    sequence(:value) { |n| "Value %04d" % n }
+    prompt_on_deploy 0
+  end
 end

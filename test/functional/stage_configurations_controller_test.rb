@@ -1,11 +1,11 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class StageConfigurationsControllerTest < ActionController::TestCase
 
   def setup
-    @project = Factory(:project)
-    @stage = Factory(:stage, :project => @project)
-    @config = Factory(:stage_configuration, :stage => @stage)
+    @project = FactoryGirl.create(:project)
+    @stage = FactoryGirl.create(:stage, :project => @project)
+    @config = FactoryGirl.create(:stage_configuration, :stage => @stage)
     @user = login
   end
 

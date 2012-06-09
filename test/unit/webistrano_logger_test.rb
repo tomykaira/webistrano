@@ -1,14 +1,14 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class Webistrano::LoggerTest < ActiveSupport::TestCase
 
   def setup
-    @project = Factory(:project, :template => 'rails')
-    @stage = Factory(:stage, :project => @project)
-    @host = Factory(:host)
+    @project = FactoryGirl.create(:project, :template => 'rails')
+    @stage = FactoryGirl.create(:stage, :project => @project)
+    @host = FactoryGirl.create(:host)
     
-    @stage_with_role = Factory(:stage, :project => @project)
-    @role = Factory(:role, :stage => @stage_with_role, :name => 'web', :host => @host)
+    @stage_with_role = FactoryGirl.create(:stage, :project => @project)
+    @role = FactoryGirl.create(:role, :stage => @stage_with_role, :name => 'web', :host => @host)
 
   end
   
@@ -25,14 +25,14 @@ class Webistrano::LoggerTest < ActiveSupport::TestCase
     
     # already completed deployment
     assert_raise(ArgumentError){
-      deployment = Factory(:deployment, :stage => @stage_with_role, :task => 'deploy:setup')
+      deployment = FactoryGirl.create(:deployment, :stage => @stage_with_role, :task => 'deploy:setup')
       deployment.complete_with_error!
       logger = Webistrano::Logger.new( deployment )  
     }
     
     # not completed deployment
     assert_nothing_raised{
-      deployment = Factory(:deployment, :stage => @stage_with_role, :task => 'deploy:setup')
+      deployment = FactoryGirl.create(:deployment, :stage => @stage_with_role, :task => 'deploy:setup')
       assert !deployment.completed?
       logger = Webistrano::Logger.new( deployment )  
     }
@@ -40,7 +40,7 @@ class Webistrano::LoggerTest < ActiveSupport::TestCase
   end
   
   test "log" do
-    deployment = Factory(:deployment, :stage => @stage_with_role, :task => 'deploy:setup')
+    deployment = FactoryGirl.create(:deployment, :stage => @stage_with_role, :task => 'deploy:setup')
     logger = Webistrano::Logger.new( deployment )
     
     logger.level = Webistrano::Logger::TRACE
@@ -73,7 +73,7 @@ class Webistrano::LoggerTest < ActiveSupport::TestCase
     
     @stage_with_role.reload
     
-    deployment = Factory(:deployment, :stage => @stage_with_role, :task => 'deploy:setup', :prompt_config => {:password => '@$%deploy@$'})
+    deployment = FactoryGirl.create(:deployment, :stage => @stage_with_role, :task => 'deploy:setup', :prompt_config => {:password => '@$%deploy@$'})
     logger = Webistrano::Logger.new( deployment )
     logger.level = Webistrano::Logger::TRACE
 

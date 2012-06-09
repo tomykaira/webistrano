@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../non_transactional_test_helper'
+require 'non_transactional_test_helper'
 
 class DeploymentTest < Test::Unit::TestCase
   
@@ -9,11 +9,11 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "locking_of_stage_through_lock_and_fire" do
-    stage = Factory(:role, :name => 'app').stage
+    stage = FactoryGirl.create(:role, :name => 'app').stage
     assert !stage.locked?
     
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = Factory(:user)
+      deployment.user  = FactoryGirl.create(:user)
       deployment.stage = stage
       deployment.task  = 'deploy'
     end
@@ -24,10 +24,10 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "lock_and_fire_handles_transaction_abort" do
-    stage = Factory(:role, :name => 'app').stage
+    stage = FactoryGirl.create(:role, :name => 'app').stage
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = Factory(:user)
+      deployment.user  = FactoryGirl.create(:user)
       deployment.stage = stage
       deployment.task  = 'deploy'
       deployment.expects(:save!).raises(ActiveRecord::RecordInvalid)
@@ -39,10 +39,10 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "lock_and_fire_sets_locking_deployment" do
-    stage = Factory(:role, :name => 'app').stage
+    stage = FactoryGirl.create(:role, :name => 'app').stage
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = Factory(:user, :login => 'MasterBlaster')
+      deployment.user  = FactoryGirl.create(:user, :login => 'MasterBlaster')
       deployment.stage = stage
       deployment.task  = 'deploy'
     end
@@ -55,10 +55,10 @@ class DeploymentTest < Test::Unit::TestCase
   end
   
   test "lock_and_fire_handles_transaction_abort_if_stage_breaks" do
-    stage = Factory(:role, :name => 'app').stage
+    stage = FactoryGirl.create(:role, :name => 'app').stage
     assert !stage.locked?
     res = Deployment.lock_and_fire do |deployment|
-      deployment.user  = Factory(:user)
+      deployment.user  = FactoryGirl.create(:user)
       deployment.stage = stage
       deployment.task  = 'deploy'
       Stage.any_instance.stubs(:lock).raises(ActiveRecord::RecordInvalid)

@@ -62,7 +62,7 @@
 <table width="100%">
   <tr>
     <td width="">
-      <%= link_to_function 'Scroll to top', "scroll_to_top()", :class => 'arrow_link' %> | <%= link_to 'Back to stage', [@project, @stage], :class => 'arrow_link', :id => 'back_link_at_the_bottom' %>
+      <a href="#" onclick="scroll_to_top()" class="arrow_link">Scroll to top</a> | <%= link_to 'Back to stage', [@project, @stage], :class => 'arrow_link', :id => 'back_link_at_the_bottom' %>
     </td>
     <td align="right" width="120px">
       <%= image_tag('peritor_theme/status_' + @deployment.status + '_small.gif', :title => @deployment.status, :width => 20, :heigth => 15, :style => 'vertical-align:middle;') %>

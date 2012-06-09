@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead.
@@ -7,13 +7,13 @@ class UserTest < ActiveSupport::TestCase
 
   test "should_create_user" do
     assert_difference 'User.count' do
-      user = Factory(:user)
+      user = FactoryGirl.create(:user)
       assert !user.new_record?, "#{user.errors.full_messages.to_sentence}"
     end
   end
 
   test "admin" do
-    user = Factory(:user)
+    user = FactoryGirl.create(:user)
     assert !user.admin?
 
     user.admin = 1
@@ -29,11 +29,11 @@ class UserTest < ActiveSupport::TestCase
   test "revert_admin_status_only_if_other_admins_left" do
     User.delete_all
 
-    admin = Factory(:user)
+    admin = FactoryGirl.create(:user)
     admin.make_admin!
     assert admin.admin?
 
-    user = Factory(:user)
+    user = FactoryGirl.create(:user)
     assert !user.admin?
 
     # check that the admin status of admin cannot be taken
@@ -43,11 +43,11 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "recent_deployments" do
-    user = Factory(:user)
-    stage = Factory(:stage)
-    role = Factory(:role, :stage => stage)
+    user = FactoryGirl.create(:user)
+    stage = FactoryGirl.create(:stage)
+    role = FactoryGirl.create(:role, :stage => stage)
     5.times do
-      deployment = Factory(:deployment, :stage => stage, :user => user)
+      deployment = FactoryGirl.create(:deployment, :stage => stage, :user => user)
     end
 
     assert_equal 5, user.deployments.count
@@ -56,7 +56,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "disable" do
-    user = Factory(:user)
+    user = FactoryGirl.create(:user)
     assert !user.disabled?
 
     user.disable!
@@ -69,7 +69,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "disable_resets_remember_me" do
-    user = Factory(:user)
+    user = FactoryGirl.create(:user)
     user.remember_me!
 
     assert_equal false, user.remember_expired?
@@ -85,7 +85,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal [], User.enabled
     assert_equal [], User.disabled
 
-    user = Factory(:user)
+    user = FactoryGirl.create(:user)
 
     assert_equal [user], User.enabled
     assert_equal [], User.disabled

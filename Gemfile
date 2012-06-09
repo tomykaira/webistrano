@@ -1,12 +1,14 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.3'
+gem 'rails', '3.2.5'
+gem 'prototype-rails'
 
-gem 'capistrano', '2.5.19'
+gem 'capistrano'#, '2.5.19'
 gem 'open4',      '0.9.3'
 gem 'syntax',     '1.0.0'
-gem 'version_fu'
+gem 'version_fu', :github => 'jmckible/version_fu'
 gem 'devise'
+gem 'devise-encryptable'
 gem 'compass'
 gem 'haml'
 

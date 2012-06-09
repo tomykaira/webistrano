@@ -1,10 +1,10 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class StageConfigurationTest < ActiveSupport::TestCase
   
   test "uniqiness_of_name" do
-    p = Factory(:project)
-    s = Factory(:stage, :project => p)
+    p = FactoryGirl.create(:project)
+    s = FactoryGirl.create(:stage, :project => p)
     
     # create a new parameter by hand
     config = s.configuration_parameters.build(:name => 'bla_bla', :value => 'blub_blub')

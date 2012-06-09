@@ -1,10 +1,10 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class StagesControllerTest < ActionController::TestCase
 
   def setup
-    @project = Factory(:project, :template => 'mongrel_rails')
-    @stage = Factory(:stage, :project => @project, :name => 'my_stage')
+    @project = FactoryGirl.create(:project, :template => 'mongrel_rails')
+    @stage = FactoryGirl.create(:stage, :project => @project, :name => 'my_stage')
     @user = login
   end
 
@@ -50,8 +50,8 @@ class StagesControllerTest < ActionController::TestCase
   end
 
   test "capfile" do
-    @project = Factory(:project, :template => 'mongrel_rails', :name => 'Schumaker Levi')
-    @stage = Factory(:stage, :project => @project, :name => '123 Name')
+    @project = FactoryGirl.create(:project, :template => 'mongrel_rails', :name => 'Schumaker Levi')
+    @stage = FactoryGirl.create(:stage, :project => @project, :name => '123 Name')
 
     # set some config values and expect to find these in the Capfile
     @stage.configuration_parameters.build(:name => 'scm_command', :value => '/tmp/foobar_scm_command').save!
@@ -59,11 +59,11 @@ class StagesControllerTest < ActionController::TestCase
     @project.configuration_parameters.build(:name => 'mongrel_port', :value => '99').save!
     @project.configuration_parameters.build(:name => 'bool_conf', :value => 'true').save!
 
-    web_role = Factory(:role, :stage => @stage, :name => 'web')
-    app_role = Factory(:role, :stage => @stage, :name => 'app', :primary => 1)
-    db_role = Factory(:role, :stage => @stage, :name => 'db', :no_release => 1)
+    web_role = FactoryGirl.create(:role, :stage => @stage, :name => 'web')
+    app_role = FactoryGirl.create(:role, :stage => @stage, :name => 'app', :primary => 1)
+    db_role = FactoryGirl.create(:role, :stage => @stage, :name => 'db', :no_release => 1)
 
-    recipe_1 = Factory(:recipe, :name => 'Copy config files', :body => 'foobar here')
+    recipe_1 = FactoryGirl.create(:recipe, :name => 'Copy config files', :body => 'foobar here')
     @stage.recipes << recipe_1
 
     get :capfile, :id => @stage.id, :project_id => @project.id, :format => 'text'

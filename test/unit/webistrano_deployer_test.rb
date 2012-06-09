@@ -1,17 +1,17 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class Webistrano::DeployerTest < ActiveSupport::TestCase
 
   def setup
-    @project = Factory(:project, :template => 'pure_file')
-    @stage   = Factory(:stage,   :project  => @project)
-    @host    = Factory(:host)
+    @project = FactoryGirl.create(:project, :template => 'pure_file')
+    @stage   = FactoryGirl.create(:stage,   :project  => @project)
+    @host    = FactoryGirl.create(:host)
 
-    @role = Factory(:role, :stage => @stage, :host => @host, :name => 'web')
+    @role = FactoryGirl.create(:role, :stage => @stage, :host => @host, :name => 'web')
 
     assert @stage.prompt_configurations.empty?
 
-    @deployment = Factory(:deployment, :stage => @stage, :task => 'master:do')
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => 'master:do')
   end
 
   test "initialization    " do
@@ -100,14 +100,14 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
 
     # get things started
-    deployer = Webistrano::Deployer.new( Factory(:deployment, :stage => @stage) )
+    deployer = Webistrano::Deployer.new( FactoryGirl.create(:deployment, :stage => @stage) )
     deployer.stubs(:save_revision)
     deployer.invoke_task!
   end
 
   test "role_attributes" do
     # prepare stage + roles
-    @stage = Factory(:stage)
+    @stage = FactoryGirl.create(:stage)
 
     web_role = @stage.roles.build(:name => 'web', :host_id => @host.id, :primary => 1, :no_release => 0)
     web_role.save!
@@ -156,14 +156,14 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
 
     # get things started
-    deployer = Webistrano::Deployer.new( Factory(:deployment, :stage => @stage) )
+    deployer = Webistrano::Deployer.new( FactoryGirl.create(:deployment, :stage => @stage) )
     deployer.invoke_task!
   end
 
   test "excluded_hosts" do
     # prepare stage + roles
-    @stage = Factory(:stage)
-    dead_host = Factory(:host)
+    @stage = FactoryGirl.create(:stage)
+    dead_host = FactoryGirl.create(:host)
 
     web_role = @stage.roles.build(:name => 'web', :host_id => @host.id)
     web_role.save!
@@ -176,7 +176,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
 
     @stage.reload
 
-    deployment = Factory(:deployment, :stage => @stage, :excluded_host_ids => [dead_host.id])
+    deployment = FactoryGirl.create(:deployment, :stage => @stage, :excluded_host_ids => [dead_host.id])
     assert_equal [web_role, app_role].map(&:id).sort, deployment.deploy_to_roles.map(&:id).sort
     # prepare Mocks
     #
@@ -274,7 +274,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   test "task_invokation_successful" do
     prepare_config_mocks
 
-    @deployment = Factory(:deployment, :stage => @stage, :task => 'deploy:update')
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => 'deploy:update')
 
     deployer = Webistrano::Deployer.new(@deployment)
     deployer.invoke_task!
@@ -319,7 +319,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     # main mock install
     Webistrano::Configuration.expects(:new).returns(mock_cap_config)
 
-    @deployment = Factory(:deployment, :stage => @stage, :task => 'deploy:update')
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => 'deploy:update')
 
     deployer = Webistrano::Deployer.new(@deployment)
     deployer.invoke_task!
@@ -333,7 +333,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
 
   test "db_logging" do
-    @deployment = Factory(:deployment, :stage => @stage, :task => 'deploy:update')
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => 'deploy:update')
 
     # mocks
     mock_namespace = mock
@@ -365,7 +365,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
 
   test "db_logging_if_task_vars_incomplete" do
     # create a deployment
-    @deployment = Factory(:deployment, :stage => @stage, :task => 'deploy:default')
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => 'deploy:default')
 
     # and after creation
     # prepare stage configuration to miss important vars
@@ -390,7 +390,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     conf = @stage.configuration_parameters.build(:name => 'repository', :value => 'file:///tmp/')
     conf.save!
 
-    @deployment = Factory(:deployment, :stage => @stage, :task => 'deploy:default')
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => 'deploy:default')
     # prepare Mocks
     #
 
@@ -437,19 +437,19 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
 
   test "handling_of_scm_error" do
     # prepare
-    project = Factory(:project, :template => 'rails')
-    stage = Factory(:stage, :project => @project)
-    host = Factory(:host, :name => '127.0.0.1')
-    app_role = Factory(:role, :name => 'app', :host => host, :stage => stage)
-    web_role = Factory(:role, :name => 'web', :host => host, :stage => stage)
-    db_role = Factory(:role, :name => 'db', :host => host, :stage => stage, :primary => 1)
+    project = FactoryGirl.create(:project, :template => 'rails')
+    stage = FactoryGirl.create(:stage, :project => @project)
+    host = FactoryGirl.create(:host, :name => '127.0.0.1')
+    app_role = FactoryGirl.create(:role, :name => 'app', :host => host, :stage => stage)
+    web_role = FactoryGirl.create(:role, :name => 'web', :host => host, :stage => stage)
+    db_role = FactoryGirl.create(:role, :name => 'db', :host => host, :stage => stage, :primary => 1)
 
     # mock Open4 to return an error
     mock_status = mock
     mock_status.expects(:exitstatus).returns(1)
     Open4.expects(:popen4).returns(mock_status)
 
-    deployment = Factory(:deployment, :stage => stage, :task => 'deploy:default')
+    deployment = FactoryGirl.create(:deployment, :stage => stage, :task => 'deploy:default')
     deployer = Webistrano::Deployer.new(deployment)
     deployer.invoke_task!
 
@@ -459,17 +459,17 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
 
   test "handling_of_open_scm_command_error" do
     # prepare
-    project = Factory(:project, :template => 'rails')
-    stage = Factory(:stage, :project => @project)
-    host = Factory(:host, :name => '127.0.0.1')
-    app_role = Factory(:role, :name => 'app', :host => host, :stage => stage)
-    web_role = Factory(:role, :name => 'web', :host => host, :stage => stage)
-    db_role = Factory(:role, :name => 'db', :host => host, :stage => stage, :primary => 1)
+    project = FactoryGirl.create(:project, :template => 'rails')
+    stage = FactoryGirl.create(:stage, :project => @project)
+    host = FactoryGirl.create(:host, :name => '127.0.0.1')
+    app_role = FactoryGirl.create(:role, :name => 'app', :host => host, :stage => stage)
+    web_role = FactoryGirl.create(:role, :name => 'web', :host => host, :stage => stage)
+    db_role = FactoryGirl.create(:role, :name => 'db', :host => host, :stage => stage, :primary => 1)
 
     # set the scm_command to something bogus in order to throw an error
     stage.configuration_parameters.build(:name => 'scm_command', :value => '/tmp/foobar_scm_command').save!
 
-    deployment = Factory(:deployment, :stage => stage, :task => 'deploy:default')
+    deployment = FactoryGirl.create(:deployment, :stage => stage, :task => 'deploy:default')
     deployer = Webistrano::Deployer.new(deployment)
     deployer.invoke_task!
 
@@ -478,8 +478,8 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
 
   test "handling_of_prompt_configuration" do
-    stage_with_prompt = Factory(:stage, :name => 'prod', :project => @project)
-    role = Factory(:role, :stage => stage_with_prompt)
+    stage_with_prompt = FactoryGirl.create(:stage, :name => 'prod', :project => @project)
+    role = FactoryGirl.create(:role, :stage => stage_with_prompt)
     assert stage_with_prompt.deployment_possible?, stage_with_prompt.deployment_problems.inspect
 
     # add a config value that wants a promp
@@ -487,7 +487,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     assert !stage_with_prompt.prompt_configurations.empty?
 
     # create the deployment
-    deployment = Factory(:deployment, :stage => stage_with_prompt, :task => 'deploy', :prompt_config => {:password => '123'})
+    deployment = FactoryGirl.create(:deployment, :stage => stage_with_prompt, :task => 'deploy', :prompt_config => {:password => '123'})
 
     deployer = Webistrano::Deployer.new(deployment)
     deployer.invoke_task!
@@ -536,10 +536,10 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
 
   test "custom_recipes" do
-    recipe_1 = Factory(:recipe, :name => 'Copy config files', :body => 'foobar here')
+    recipe_1 = FactoryGirl.create(:recipe, :name => 'Copy config files', :body => 'foobar here')
     @stage.recipes << recipe_1
 
-    recipe_2 = Factory(:recipe, :name => 'Merge JS files', :body => 'more foobar here')
+    recipe_2 = FactoryGirl.create(:recipe, :name => 'Merge JS files', :body => 'more foobar here')
     @stage.recipes << recipe_2
 
     assert_equal [@stage], recipe_1.stages
@@ -585,10 +585,10 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
 
   test "load_order_of_recipes" do
-    recipe_1 = Factory(:recipe, :name => 'B', :body => 'foobar here')
+    recipe_1 = FactoryGirl.create(:recipe, :name => 'B', :body => 'foobar here')
     @stage.recipes << recipe_1
 
-    recipe_2 = Factory(:recipe, :name => 'A', :body => 'more foobar here')
+    recipe_2 = FactoryGirl.create(:recipe, :name => 'A', :body => 'more foobar here')
     @stage.recipes << recipe_2
 
     # Logger stubing
@@ -772,7 +772,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployment.stage = @stage
     deployment.task = 'deploy'
     deployment.description = 'bugfix'
-    deployment.user = Factory(:user)
+    deployment.user = FactoryGirl.create(:user)
     deployment.roles << @stage.roles
     deployment.prompt_config = {:using_foo => '#{foo} 1234'}
     deployment.save!
@@ -849,8 +849,8 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     deployer = Webistrano::Deployer.new(d)
 
     assert_not_nil deployer.list_tasks
-    assert_equal 25, deployer.list_tasks.size, deployer.list_tasks.map(&:fully_qualified_name).sort.inspect
-    assert_equal 23, @stage.list_tasks.size # filter shell and invoke
+    assert_equal 26, deployer.list_tasks.size, deployer.list_tasks.map(&:fully_qualified_name).sort.inspect
+    assert_equal 24, @stage.list_tasks.size # filter shell and invoke
     deployer.list_tasks.each{|t| assert t.is_a?(Capistrano::TaskDefinition) }
 
     # add a stage recipe
@@ -861,7 +861,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
         end
       end
     EOS
-    recipe = Factory(:recipe, :name => 'A new recipe', :body => recipe_body)
+    recipe = FactoryGirl.create(:recipe, :name => 'A new recipe', :body => recipe_body)
     @stage.recipes << recipe
     @stage = Stage.find(@stage.id)
 
@@ -869,8 +869,8 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
     d.stage = @stage
     deployer = Webistrano::Deployer.new(d)
 
-    assert_equal 26, deployer.list_tasks.size
-    assert_equal 24, @stage.list_tasks.size # filter shell and invoke
+    assert_equal 27, deployer.list_tasks.size
+    assert_equal 25, @stage.list_tasks.size # filter shell and invoke
     assert_equal 1, deployer.list_tasks.delete_if{|t| t.fully_qualified_name != 'foo:bar'}.size
     assert_equal 1, @stage.list_tasks.delete_if{|t| t[:name] != 'foo:bar'}.size
   end
@@ -953,7 +953,7 @@ class Webistrano::DeployerTest < ActiveSupport::TestCase
   end
 
   def assert_correct_task_called(task_name)
-    @deployment = Factory(:deployment, :stage => @stage, :task => task_name)
+    @deployment = FactoryGirl.create(:deployment, :stage => @stage, :task => task_name)
     # prepare Mocks
     #
 

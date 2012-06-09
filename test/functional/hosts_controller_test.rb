@@ -1,9 +1,9 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class HostsControllerTest < ActionController::TestCase
 
   def setup
-    @host = Factory(:host)
+    @host = FactoryGirl.create(:host)
   end
 
   test "should_get_index" do

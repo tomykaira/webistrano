@@ -1,12 +1,12 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class ConfigurationParameterTest < ActiveSupport::TestCase
 
   def setup
-    @project = Factory(:project)
+    @project = FactoryGirl.create(:project)
     ConfigurationParameter.delete_all # clear default config from template
     @project.reload
-    @stage = Factory(:stage, :project => @project)
+    @stage = FactoryGirl.create(:stage, :project => @project)
   end
 
   test "creation" do
@@ -53,7 +53,7 @@ class ConfigurationParameterTest < ActiveSupport::TestCase
     }
     
     # but creation of this value for another project is ok
-    @second_project = Factory(:project)
+    @second_project = FactoryGirl.create(:project)
     @second_project.configuration_parameters.delete_all
     assert_nothing_raised{
       c = @second_project.configuration_parameters.build(
@@ -89,7 +89,7 @@ class ConfigurationParameterTest < ActiveSupport::TestCase
     c.save!
     
     # create a new stage, that should have the original value
-    stage_2 = Factory(:stage, :project => @project)
+    stage_2 = FactoryGirl.create(:stage, :project => @project)
     
     # now check the config values
     assert_equal 'deploy', @project.configuration_parameters.collect(&:value).first
@@ -121,7 +121,7 @@ class ConfigurationParameterTest < ActiveSupport::TestCase
     c.save!
     
     # create a new stage, that should have the original value
-    stage_2 = Factory(:stage, :project => @project)
+    stage_2 = FactoryGirl.create(:stage, :project => @project)
     
     # now check the config values
     assert_equal 'deploy', @project.configuration_parameters.collect(&:value).first
