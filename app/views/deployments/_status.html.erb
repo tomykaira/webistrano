@@ -6,7 +6,7 @@
         <b>Status:</b> <%= @deployment.status %>
         <% if @deployment.cancelling_possible? %>
           &nbsp; &nbsp;
-          <%= link_to "Cancel", [:cancel, current_project, current_stage, @deployment], :confirm => "Are you sure? Killing this deployment will not cleanup and rollback.", :method => "post", :class => 'arrow_link' %>
+          <%= link_to "Cancel", [:cancel, current_project, current_stage, @deployment], :data => { :confirm => "Are you sure? Killing this deployment will not cleanup and rollback." }, :method => "post", :class => 'arrow_link' %>
         <% end %>
         <% if @deployment.completed? %>
           &nbsp; &nbsp;
@@ -75,7 +75,7 @@
       <% end %>
       <% if @deployment.cancelling_possible? %>
         &nbsp; &nbsp;
-        <%= link_to "Cancel", [:cancel, current_project, current_stage, @deployment], :confirm => "Are you sure? Killing this deployment will not cleanup and rollback.", :method => "post", :class => 'arrow_link' %>
+        <%= link_to "Cancel", [:cancel, current_project, current_stage, @deployment], :data => { :confirm => "Are you sure? Killing this deployment will not cleanup and rollback." }, :method => "post", :class => 'arrow_link' %>
       <% end %>
     </td>
   </tr>

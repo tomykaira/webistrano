@@ -29,7 +29,7 @@
           <td><%= link_to 'Edit', edit_user_path(user) %></td>
         <% end -%>
         <% if current_user.admin? -%>
-          <td><%= link_to 'Delete', user_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
+          <td><%= link_to 'Delete', user_path(user), :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
         <% end -%>
       </tr>
     <% end %>

@@ -20,7 +20,7 @@
       <td><%= role.role_attribute_hash.inspect unless role.role_attribute_hash.blank?  %></td>
       <td><%= raw role.status_in_html %></td>
       <td><%= link_to 'Edit', edit_project_stage_role_path(@project, @stage, role) %></td>
-      <td><%= link_to 'Delete', project_stage_role_path(@project, @stage, role), :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= link_to 'Delete', project_stage_role_path(@project, @stage, role), :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
     </tr>
   <% end %>
   </table>

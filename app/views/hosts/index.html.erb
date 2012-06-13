@@ -16,7 +16,7 @@
       <td><%= host.roles.count %></td>
       <% if current_user.admin? %>
         <td><%= link_to 'Edit', [:edit, host] %></td>
-        <td><%= link_to 'Delete', host, :confirm => 'Are you sure?', :method => :delete %></td>
+        <td><%= link_to 'Delete', host, :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
       <% end %>
     </tr>
   <% end %>

@@ -29,9 +29,9 @@
     <%= link_to 'Edit & change password', [:edit, @user], :class => 'arrow_link' %> |
 
     <% if @user.disabled? %>
-      <%= link_to 'Enable', enable_user_path(@user), :confirm => 'Are you sure?', :method => :post, :class => 'arrow_link'  %>
+      <%= link_to 'Enable', enable_user_path(@user), :data => { :confirm => 'Are you sure?' }, :method => :post, :class => 'arrow_link'  %>
     <% else %>
-      <%= link_to 'Disable', user_path(@user), :confirm => 'Are you sure? Disabled users can no longer login.', :method => :delete, :class => 'arrow_link'  %>
+      <%= link_to 'Disable', user_path(@user), :data => { :confirm => 'Are you sure? Disabled users can no longer login.' }, :method => :delete, :class => 'arrow_link'  %>
     <% end %>
   <% end %>
   </p>

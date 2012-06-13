@@ -1,12 +1,12 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.5'
+gem 'rails', '3.2.6'
 
 gem 'jquery-rails'
 gem 'prototype-rails'
 gem 'exception_notification'
 
-gem 'capistrano'#, '2.5.19'
+gem 'capistrano'
 gem 'open4',      '0.9.3'
 gem 'syntax',     '1.0.0'
 gem 'version_fu', :github => 'jmckible/version_fu'
