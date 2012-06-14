@@ -7,6 +7,7 @@ class ProjectsController < ApplicationController
   # GET /projects/dashboard
   def dashboard
     @deployments = Deployment.find(:all, :limit => 3, :order => 'created_at DESC')
+    @activities = Activity.find(:all, :limit => 10, :order => 'created_at DESC')
     respond_with(@deployments)
   end
   
@@ -57,6 +58,7 @@ class ProjectsController < ApplicationController
     if @project.save
       @project.clone(@original) if load_clone_original
       
+      add_activity_for(@project, 'project.created')
       flash[:notice] = 'Project was successfully created.'
       respond_with(@project, :location => @project)
     else
@@ -72,6 +74,7 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
 
     if @project.update_attributes(params[:project])
+      add_activity_for(@project, 'project.updated')
       flash[:notice] = 'Project was successfully updated.'
       respond_with(@project, :location => @project)
     else
@@ -85,6 +88,7 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
     @project.destroy
 
+    add_activity_for(@project, 'project.destroyed')
     flash[:notice] = 'Project was successfully deleted.'
     respond_with(@project)
   end

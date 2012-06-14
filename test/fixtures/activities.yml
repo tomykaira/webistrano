@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  target_name: MyString
+  target_id: 
+  target_type: MyString
+  tag: MyString
+  args: MyText
+
+two:
+  user_id: 1
+  target_name: MyString
+  target_id: 
+  target_type: MyString
+  tag: MyString
+  args: MyText

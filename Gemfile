@@ -23,6 +23,8 @@ group :test do
   gem 'test-unit', '2.0.9', :require => 'test/unit'
   gem 'mocha'
   gem 'factory_girl_rails'
+
+  gem 'rspec-rails'
 end
 
 group :production do

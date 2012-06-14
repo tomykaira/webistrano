@@ -1,0 +1,29 @@
+%table.deployment_block{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+
+  %tr
+    %td
+      %b Target:
+    %td
+      = link_to truncate(activity.target_type, :length => 21),
+        activity.target, :title => activity.target_type
+    %td
+      %b Tag:
+    %td
+      = activity.tag
+    %td
+      %b User:
+    %td
+      = link_to truncate(activity.user.login, :length => 10),
+        activity.user, :title => activity.user.login
+    %td
+      %b Occurred:
+    %td
+      = activity.created_at.to_s(:log)
+
+
+  - if activity.data['changes'] && !activity.data['changes'].empty?
+    %tr
+      %td
+        %b Updates:
+      %td
+        = activity.data['changes'].to_s

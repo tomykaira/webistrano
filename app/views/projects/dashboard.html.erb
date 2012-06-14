@@ -22,6 +22,19 @@
 <br />
 
 <fieldset class="fieldset">
+  <legend>Recent activities</legend>
+  <% if @activities.empty? %>
+    <br/>
+      No recent activities.
+    <br/>
+  <% else %>
+    <% @activities.each do |activity| %>
+      <%= render(:partial => 'activities/list_item', :locals => {:activity => activity}) %>
+    <% end %>
+  <% end %>
+</fieldset>
+
+<fieldset class="fieldset">
   <legend>Recent deployments</legend>
   <% if @deployments.empty? %>
     <br/>

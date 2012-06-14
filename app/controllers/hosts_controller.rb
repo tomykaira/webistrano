@@ -39,6 +39,7 @@ class HostsController < ApplicationController
     @host = Host.new(params[:host])
 
     if @host.save
+      add_activity_for(@host, 'host.created')
       flash[:notice] = 'Host was successfully created.'
       respond_with(@host, :location => @host)
     else
@@ -52,6 +53,7 @@ class HostsController < ApplicationController
     @host = Host.find(params[:id])
 
     if @host.update_attributes(params[:host])
+      add_activity_for(@host, 'host.updated')
       flash[:notice] = 'Host was successfully updated.'
       respond_with(@host, :location => @host)
     else
@@ -65,6 +67,7 @@ class HostsController < ApplicationController
     @host = Host.find(params[:id])
     @host.destroy
 
+    add_activity_for(@host, 'host.destroyed')
     flash[:notice] = 'Host was successfully deleted.'
     respond_with(@host)
   end
