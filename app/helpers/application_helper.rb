@@ -124,11 +124,19 @@ module ApplicationHelper
   end
 
   def breadcrumb_box(&block)
-    out = "<div class='breadcrumb'><b>"
+    out = <<-EOS
+<ul class="breadcrumb">
+<li><a href="/">Top</a></li>
+<span class="divider">&raquo;</span>
+EOS
     out << capture(&block) if block
-    out << "</b></div>"
+    out << "</ul>"
 
     raw out
   end
 
+  def any_path(target)
+    model_class = target.class.name.downcase
+    send("#{model_class}_path", target)
+  end
 end

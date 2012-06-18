@@ -29,14 +29,14 @@
           <%= link_to 'Webistrano', root_path, class: 'brand' %>
           <nav>
             <ul class="nav pull-right">
-              <li><%= link_to 'Project', projects_path %></li>
+              <li><%= link_to 'Projects', projects_path %></li>
               <li><%= link_to 'Hosts',   hosts_path %></li>
               <li><%= link_to 'Recipes', recipes_path %></li>
               <li><%= link_to 'Users',   users_path %></li>
-              <li id="fat-menu" class="dropdown">
+              <li class="dropdown">
                 <%= link_to current_user.login, user_path(current_user) %>
                 <ul class="dropdown-menu">
-                  <li><%= link_to 'Logout', destroy_user_session_path, method: "delete" %></li>
+                  <li><%= link_to 'Logout', destroy_user_session_path, method: :delete %></li>
                 </ul>
               </li>
             </ul>
@@ -45,38 +45,32 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="content">
-        <div class="row">
-          <div class="span3">
-            <% if user_signed_in? %>
-              <div class="menu">
-                <%= render(:partial => 'layouts/menu') %>
-              </div>
-            <% end %>
-          </div>
-          <div class="span9">
-            <%= yield :breadcrumb %>
-            <%= yield :flash_content %>
-            <%= yield :page_title %>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <%= render "layouts/menu" %>
+        </div>
+        <div class="span9">
+          <%= yield :breadcrumb %>
+          <%= yield :flash_content %>
+          <%= yield :page_title %>
 
-            <% unless flash[:notice].blank? %>
-              <%= nice_flash(flash[:notice]) %>
-            <% end %>
+          <% unless flash[:notice].blank? %>
+            <%= nice_flash(flash[:notice]) %>
+          <% end %>
 
-            <% unless flash[:error].blank? %>
-              <%= error_flash(flash[:error]) %>
-            <% end %>
+          <% unless flash[:error].blank? %>
+            <%= error_flash(flash[:error]) %>
+          <% end %>
 
-            <%= yield :action_box %>
+          <%= yield :action_box %>
 
-            <%= yield  %>
-          </div>
+          <%= yield  %>
         </div>
       </div>
 
-      <footer>
-        Copyright &copy; 2007, 2008, 2009 | Version <%= WEBISTRANO_VERSION %> | <a href="http://labs.peritor.com/webistrano" target="_blank">http://labs.peritor.com/webistrano</a>
+      <footer class="footer pull-right">
+        <p>Copyright &copy; 2007, 2008, 2009 | Version <%= WEBISTRANO_VERSION %> | <a href="http://labs.peritor.com/webistrano" target="_blank">http://labs.peritor.com/webistrano</a></p>
       </footer>
     </div>
 
