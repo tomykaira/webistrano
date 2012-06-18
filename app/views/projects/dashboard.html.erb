@@ -27,7 +27,7 @@
           <td><%= activity.created_at.to_s(:log) %></td>
           <td>
             <%- if activity.tag !~ /created\Z/ && activity.data['changes'] %>
-              <ul>
+              <ul class="unstyled">
                 <%- activity.data['changes'].keys.each do |key| %>
                   <li><%= key %>
                     <ul>

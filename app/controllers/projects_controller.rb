@@ -88,7 +88,6 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
     @project.destroy
 
-    add_activity_for(@project, 'project.destroyed')
     flash[:notice] = 'Project was successfully deleted.'
     respond_with(@project)
   end

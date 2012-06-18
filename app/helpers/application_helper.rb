@@ -137,6 +137,16 @@ EOS
 
   def any_path(target)
     model_class = target.class.name.downcase
-    send("#{model_class}_path", target)
+    case model_class
+    when 'stage'
+      project_stage_path(target.project, target)
+    else
+      send("#{model_class}_path", target)
+    end
   end
 end
+
+
+
+
+
