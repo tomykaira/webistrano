@@ -140,13 +140,10 @@ EOS
     case model_class
     when 'stage'
       project_stage_path(target.project, target)
+    when 'role'
+      project_stage_role_path(target.stage.project, target.stage, target)
     else
       send("#{model_class}_path", target)
     end
   end
 end
-
-
-
-
-
