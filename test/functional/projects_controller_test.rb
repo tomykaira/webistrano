@@ -118,7 +118,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_difference "Project.count", 1 do
       get :new, :clone => @project.id
       assert_response :success
-      assert_select "h2", "Clone project"
+      assert_select "h1", "Clone project"
       post :create, :clone => @project.id, :project => { :name => 'Project Alpha', :template => 'mongrel_rails'}
       assert_response :redirect
     end

@@ -67,7 +67,6 @@ class HostsController < ApplicationController
     @host = Host.find(params[:id])
     @host.destroy
 
-    add_activity_for(@host, 'host.destroyed')
     flash[:notice] = 'Host was successfully deleted.'
     respond_with(@host)
   end
