@@ -1,4 +1,20 @@
-group :specs do
+group :test do
+  guard 'test' do
+    watch(%r{^lib/(.*)\.rb})                              { |m| "test/lib/#{m[1]}_test.rb" }
+    watch(%r{^test/(?!non_transactional/)(.*)_test.rb})
+    watch(%r{^test/test_helper.rb})                       { "test" }
+
+    # Rails example
+    watch(%r{^app/models/(.*)\.rb})                       { |m| "test/unit/#{m[1]}_test.rb" }
+    watch(%r{^app/controllers/(.*)\.rb})                  { |m| "test/functional/#{m[1]}_test.rb" }
+    watch(%r{^app/controllers/application_controller.rb}) { "test/functional" }
+    watch(%r{^app/controllers/application_controller.rb}) { "test/integration" }
+    watch(%r{^app/views/(.*)\.rb})                        { "test/integration" }
+    watch(%r{^test/factories.rb})                         { "test/unit" }
+  end
+end
+
+group :spec do
   guard 'rspec', :version => 2 do
     watch(%r{^spec/.+_spec\.rb$})
     watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }

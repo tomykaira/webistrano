@@ -29,7 +29,7 @@ end
 
 group :test do
   gem 'sqlite3-ruby', :require => 'sqlite3'
-  gem 'test-unit', '2.0.9', :require => 'test/unit'
+  gem 'test-unit'
   gem 'mocha'
   gem 'factory_girl_rails'
   gem 'database_cleaner'
@@ -40,6 +40,7 @@ group :test do
   gem 'guard'
   gem 'spork'
   gem 'rb-fsevent'
+  gem 'guard-test'
   gem 'guard-rspec'
   gem 'guard-spork'
 end
