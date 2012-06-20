@@ -70,3 +70,9 @@
   <%= render(:partial => 'deployments')%>
   <br />
 </section>
+
+<section>
+  <h2>Recent Activities</h2>
+  <%= render partial: 'activities/list', locals: { activities: @project.activities } %>
+  <br />
+</section>

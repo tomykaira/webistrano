@@ -4,6 +4,15 @@
 <% end %>
 
 <section>
+  <h2>Recent deployments</h2>
+  <% if @deployments.empty? %>
+    <p>No recent deployments.</p>
+  <% else %>
+    <%= render partial: 'deployments/list', locals: { deployments: @deployments} %>
+  <% end -%>
+</section>
+
+<section>
   <h2>Recent activities</h2>
   <% if @activities.empty? %>
     <p>No recent activities.</p>
@@ -44,13 +53,4 @@
       </tbody>
     </table>
   <% end %>
-</section>
-
-<section>
-  <h2>Recent deployments</h2>
-  <% if @deployments.empty? %>
-    <p>No recent deployments.</p>
-  <% else %>
-    <%= render partial: 'deployments/list', locals: { deployments: @deployments} %>
-  <% end -%>
 </section>

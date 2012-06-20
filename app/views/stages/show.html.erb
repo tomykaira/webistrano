@@ -94,3 +94,9 @@
   <h2>Recent deployment history</h2>
   <%= render partial: 'deployments' %>
 </section>
+
+<section>
+  <h2>Recent Activities</h2>
+  <%= render partial: 'activities/list', locals: { activities: @stage.activities } %>
+  <br />
+</section>

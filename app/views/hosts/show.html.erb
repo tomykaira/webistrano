@@ -35,3 +35,10 @@
   <h2>Stages</h2>
   <%= render partial: 'stages' %>
 </section>
+
+
+<section>
+  <h2>Recent Activities</h2>
+  <%= render partial: 'activities/list', locals: { activities: @host.activities } %>
+  <br />
+</section>
