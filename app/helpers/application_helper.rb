@@ -104,11 +104,11 @@ module ApplicationHelper
   end
 
   def breadcrumb_box(&block)
-    out = "<div class='breadcrumb'><b>"
-    out << capture(&block) if block
-    out << "</b></div>"
-
-    raw out
+    content_tag 'div', class: 'breadcrumb' do
+      content_tag 'b' do
+        capture(&block) if block
+      end
+    end
   end
 
 end
