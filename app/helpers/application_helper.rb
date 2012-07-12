@@ -41,21 +41,6 @@ module ApplicationHelper
     content_tag('span', 'prompt', class: 'configuration_prompt') if config.prompt?
   end
 
-  # returns the open/closed status of a menu
-  # either the active controller is used or the given status is returned
-  def controller_in_use_or(contr_name, status, klass)
-    if controller.is_a? contr_name
-      :open
-    else
-      if status == :closed && (klass.count <= 3 )
-        # the box should be closed
-        # open it anyway if we have less than three
-        status = :open
-      end
-
-      status
-    end
-  end
 
   # returns the display:none/visible attribute
   # if the stages of a project should be shown
