@@ -37,8 +37,8 @@ module ApplicationHelper
     end
   end
 
-  def current_stage_project_description
-    raw "stage: #{link_to current_stage.name, [current_project, current_stage]} (of project #{link_to current_project.name, current_project})"
+  def prompt_status_in_html(config)
+    content_tag('span', 'prompt', class: 'configuration_prompt') if config.prompt?
   end
 
   # returns the open/closed status of a menu
