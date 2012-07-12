@@ -20,9 +20,9 @@ module ApplicationHelper
     error_messages = obj.errors.full_messages.map {|msg| content_tag(:li, msg)}
 
     html = content_tag(:p,"#{pluralize(obj.errors.size, 'error')} prohibited this #{object_name.to_s.gsub('_', ' ')} from being saved")
-    html << content_tag(:div,
-                       content_tag(:ul, raw(error_messages))
-                       )
+    html << content_tag(:div) do
+      content_tag(:ul) { error_messages.each { |x| concat x } }
+    end
 
     content_for(:flash_content) do
       error_flash(raw(html))
