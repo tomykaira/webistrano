@@ -23,7 +23,7 @@ module Webistrano
       EOS
       
       TASKS =  <<-'EOS'
-        require 'bundler/capistrano' if user_bundler
+        require 'bundler/capistrano' if use_bundler
 
         # allocate a pty by default as some systems have problems without
         default_run_options[:pty] = true
