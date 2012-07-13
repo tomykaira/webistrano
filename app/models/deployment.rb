@@ -121,7 +121,14 @@ class Deployment < ActiveRecord::Base
     unless Rails.env.test?
       Rails.logger.info "Calling other ruby process in the background in order to deploy deployment #{self.id} (stage #{self.stage.id}/#{self.stage.name})"
 
-      system("sh -c \"cd #{Rails.root} && rails runner -e #{Rails.env} ' deployment = Deployment.find(#{self.id}); deployment.prompt_config = #{self.prompt_config.inspect.gsub('"', '\"')} ; Webistrano::Deployer.new(deployment).invoke_task! ' >> #{Rails.root}/log/#{Rails.env}.log 2>&1\" &")
+      id = self.id
+      config = self.prompt_config
+
+      Thread.new do
+        deployment = Deployment.find(id)
+        deployment.prompt_config = config
+        Webistrano::Deployer.new(deployment).invoke_task!
+      end
     end
   end
 
