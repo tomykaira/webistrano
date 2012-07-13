@@ -12,7 +12,8 @@ module Webistrano
         :runner => 'user to run as with sudo',
         :use_sudo => 'true',
         :deploy_to => '/path/to/deployment_base',
-        :repository => 'https://svn.example.com/project/trunk'
+        :repository => 'https://svn.example.com/project/trunk',
+        :use_bundler => 'true'
       }.freeze
       
       DESC = <<-'EOS'
@@ -22,6 +23,8 @@ module Webistrano
       EOS
       
       TASKS =  <<-'EOS'
+        require 'bundler/capistrano' if user_bundler
+
         # allocate a pty by default as some systems have problems without
         default_run_options[:pty] = true
       
