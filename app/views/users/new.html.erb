@@ -1,8 +1,6 @@
 <%= form_for @user do |f| -%>
   <%= render('form', :f => f) %>
 
-  <%= link_to 'Back to users', users_path, :class => 'arrow_link ontheright', :style => 'margin-right: 330px' %>
-
   <p>
     <%= f.submit "Create user" %>
   </p>

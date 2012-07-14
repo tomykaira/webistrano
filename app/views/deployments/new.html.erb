@@ -32,8 +32,6 @@
     <input style="display:none;" type="checkbox" value="<%= host.id %>" name="deployment[excluded_host_ids][]" id="deployment_excluded_host_ids_<%= host.id %>" <%= (@deployment.excluded_host_ids.include?(host.id) ? 'checked="checked"' : ''  rescue '')%>/></td>
   <% end %>
 
-  <%= link_to 'Back to stage', [@project, @stage], :class => 'arrow_link ontheright' %>
-
   <p>
     <%= f.hidden_field :override_locking %>
     <%= submit_tag "Start deployment" %>
